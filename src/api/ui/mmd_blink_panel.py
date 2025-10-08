@@ -7,6 +7,8 @@
 
 import random
 import bpy  # pylint: disable=import-error
+import os
+import sys
 from ...util.logger import Log
 
 
@@ -27,6 +29,26 @@ class RandomBlinkPanel(bpy.types.Panel):  # pylint: disable=too-few-public-metho
         """
         layout = self.layout
 
+        # 配置选择区域
+        box = layout.box()
+        box.label(text="Blink Configuration")
+        
+        # 配置选择下拉框
+        row = box.row()
+        row.prop(context.scene, "blink_config_selection", text="Config")
+        
+        # 自定义配置导入
+        row = box.row()
+        row.prop(context.scene, "blink_custom_config_path", text="Custom Config")
+        row.operator("scene.import_blink_config", text="Apply", icon='CHECKMARK')
+        
+        # 打开配置文件夹
+        row = box.row()
+        row.operator("scene.open_blink_config_folder", text="Open Config Folder", icon='FILE_FOLDER')
+        
+        # 分隔线
+        layout.separator()
+
         # 第一行：标签
         row = layout.row()
         row.label(text="Timeline")
@@ -43,6 +65,77 @@ class RandomBlinkPanel(bpy.types.Panel):  # pylint: disable=too-few-public-metho
         # 第三行：随机眨眼按钮
         row = layout.row()
         row.operator("scene.gen_random_blink")
+        
+
+
+class ImportBlinkConfigOperator(bpy.types.Operator):
+    """导入眨眼配置操作器"""
+    bl_idname = "scene.import_blink_config"
+    bl_label = "Import Blink Config"
+    bl_description = "Import custom blink configuration"
+
+    def execute(self, context):
+        """执行导入配置"""
+        scene = context.scene
+        
+        if not scene.blink_custom_config_path:
+            self.report({'ERROR'}, "Please select a custom config file")
+            return {'CANCELLED'}
+        
+        from ...core.config_manager import get_config_manager
+        config_manager = get_config_manager()
+        
+        # 从文件路径中提取配置名称
+        import os
+        config_name = os.path.splitext(os.path.basename(scene.blink_custom_config_path))[0]
+        
+        if config_manager.import_config('blink', scene.blink_custom_config_path, config_name):
+            self.report({'INFO'}, f"Successfully imported config: {config_name}")
+            # 设置当前选中项
+            scene.blink_config_selection = f"{config_name}.json"
+            # 清空自定义配置路径
+            scene.blink_custom_config_path = ""
+            # 标记需要刷新UI
+            context.area.tag_redraw()
+        else:
+            self.report({'ERROR'}, "Failed to import config")
+            return {'CANCELLED'}
+        
+        return {'FINISHED'}
+
+
+class OpenBlinkConfigFolderOperator(bpy.types.Operator):
+    """打开眨眼配置文件夹操作器"""
+    bl_idname = "scene.open_blink_config_folder"
+    bl_label = "Open Blink Config Folder"
+    bl_description = "Open the blink configuration folder"
+
+    def execute(self, context):
+        """执行打开文件夹"""
+        from ...core.config_manager import get_config_manager
+        config_manager = get_config_manager()
+        
+        # 获取用户配置目录
+        user_config_path = config_manager._get_user_config_path()
+        blink_config_dir = os.path.join(user_config_path, 'blink')
+        
+        # 确保目录存在
+        os.makedirs(blink_config_dir, exist_ok=True)
+        
+        # 打开文件夹（跨平台兼容）
+        try:
+            if os.name == 'nt':  # Windows
+                os.startfile(blink_config_dir)
+            elif os.name == 'posix':  # macOS/Linux
+                import subprocess
+                subprocess.run(['open', blink_config_dir] if sys.platform == 'darwin' else ['xdg-open', blink_config_dir])
+            
+            self.report({'INFO'}, f"Opened blink config folder: {blink_config_dir}")
+        except Exception as e:
+            self.report({'ERROR'}, f"Failed to open folder: {str(e)}")
+            return {'CANCELLED'}
+        
+        return {'FINISHED'}
 
 
 class RandomBlinkOperator(bpy.types.Operator):
@@ -57,7 +150,8 @@ class RandomBlinkOperator(bpy.types.Operator):
                               end_frame,
                               fps,
                               interval_seconds,
-                              wave_ratio):  # pylint: disable=too-many-arguments,too-many-positional-arguments
+                              wave_ratio,
+                              config=None):  # pylint: disable=too-many-arguments,too-many-positional-arguments
         """
         生成眨眼形态键动画帧序列
         
@@ -66,11 +160,18 @@ class RandomBlinkOperator(bpy.types.Operator):
         :param fps: 帧率
         :param interval_seconds: 眨眼间隔（秒）
         :param wave_ratio: 间隔波动比例（0.1-1）
+        :param config: 配置文件数据
         :return: 包含帧数据的字典 {形态键名: [{frame: 帧数, value: 值}]}
         """
         frames = {}
         current_time = start_frame / fps
         end_time = end_frame / fps
+        
+        # 获取眨眼形态键名称
+        if config:
+            blink_shape_key = config.get('shape_keys', {}).get('blink', 'まばたき')
+        else:
+            blink_shape_key = 'まばたき'
 
         while current_time < end_time:
             # 计算实际间隔（加入随机波动）
@@ -86,7 +187,7 @@ class RandomBlinkOperator(bpy.types.Operator):
 
             # 强制设置起始帧和结束帧为0
             # 生成眨眼动画（从0到1再回到0）
-            frames.setdefault('まばたき', []).extend([
+            frames.setdefault(blink_shape_key, []).extend([
                 {'frame': blink_frame - 2, 'value': 0.0},
                 {'frame': blink_frame, 'value': 1.0},
                 {'frame': blink_frame + 2, 'value': 0.0}
@@ -95,8 +196,9 @@ class RandomBlinkOperator(bpy.types.Operator):
             current_time = blink_time
 
         # 强制设置起始帧和结束帧为0
-        frames['まばたき'].insert(0, {'frame': start_frame, 'value': 0.0})
-        frames['まばたき'].append({'frame': end_frame, 'value': 0.0})
+        if blink_shape_key in frames:
+            frames[blink_shape_key].insert(0, {'frame': start_frame, 'value': 0.0})
+            frames[blink_shape_key].append({'frame': end_frame, 'value': 0.0})
 
         return frames
 
@@ -193,6 +295,13 @@ class RandomBlinkOperator(bpy.types.Operator):
         context.window_manager.progress_begin(0, 100)
         context.window.cursor_modal_set('WAIT')
 
+        # 加载配置
+        config = self.load_blink_config(context)
+        if not config:
+            context.window_manager.progress_end()
+            context.window.cursor_modal_restore()
+            return {'CANCELLED'}
+
         try:
             # 生成眨眼动画数据
             blink_data = self.generate_blink_frames(
@@ -200,17 +309,21 @@ class RandomBlinkOperator(bpy.types.Operator):
                 end_frame=scene.blink_end_frame,
                 fps=fps,
                 interval_seconds=scene.blinking_frequency,
-                wave_ratio=scene.blinking_wave_ratio
+                wave_ratio=scene.blinking_wave_ratio,
+                config=config
             )
 
             # 应用动画到选中的网格对象
-            meshes = find_mmd_meshes()
+            meshes = find_mmd_meshes_with_config(config)
             for mesh in meshes:
-                self.apply_blink_animation(mesh, blink_data, scene.blink_start_frame)
+                apply_blink_animation_with_config(mesh, blink_data, config)
 
             context.window_manager.progress_update(100)
+            
+            # 获取眨眼形态键名称
+            blink_shape_key = config.get('shape_keys', {}).get('blink', 'まばたき')
             self.report({'INFO'},
-                        f"Successfully generated {len(blink_data['まばたき'])} blink animations")
+                        f"Successfully generated {len(blink_data[blink_shape_key])} blink animations")
         except Exception as e:  # pylint: disable=broad-exception-caught
             # 结束进度条
             context.window_manager.progress_end()
@@ -224,6 +337,35 @@ class RandomBlinkOperator(bpy.types.Operator):
         # 恢复鼠标指针
         context.window.cursor_modal_restore()
         return {'FINISHED'}
+    
+    def load_blink_config(self, context):
+        """加载眨眼配置"""
+        from ...core.config_manager import get_config_manager
+        config_manager = get_config_manager()
+        
+        # 检查是否选择了自定义配置
+        if context.scene.blink_custom_config_path:
+            # 导入自定义配置
+            config_name = context.scene.blink_config_selection
+            if not config_name:
+                self.report({'ERROR'}, "Please select a configuration")
+                return None
+            
+            config = config_manager.load_config('blink', config_name)
+        else:
+            # 使用预定义配置
+            config_name = context.scene.blink_config_selection
+            if not config_name:
+                self.report({'ERROR'}, "Please select a configuration")
+                return None
+            
+            config = config_manager.load_config('blink', config_name)
+        
+        if not config:
+            self.report({'ERROR'}, f"Failed to load config: {config_name}")
+            return None
+        
+        return config
 
 
 def find_shape_keys_with_name(obj, shape_key_name):
@@ -282,3 +424,90 @@ def find_mmd_meshes():
         Log.raise_error(f"No object containing the shape key "
                         f"'{shape_key_name}' was found.", Exception)
     return found_objects
+
+
+def find_mmd_meshes_with_config(config):
+    """
+    根据配置文件查找包含指定眨眼形态键的网格对象
+    
+    :param config: 配置文件数据
+    :return: 包含配置中眨眼形态键的网格对象列表
+    """
+    meshes = []
+    
+    # 获取眨眼形态键名称
+    if config:
+        blink_shape_key = config.get('shape_keys', {}).get('blink', 'まばたき')
+    else:
+        blink_shape_key = 'まばたき'
+    
+    for obj in bpy.context.scene.objects:
+        if obj.type == 'MESH':
+            if obj.data.shape_keys and obj.data.shape_keys.key_blocks:
+                for shape_key in obj.data.shape_keys.key_blocks:
+                    if shape_key.name == blink_shape_key:
+                        meshes.append(obj)
+                        break
+    return meshes
+
+
+def apply_blink_animation_with_config(mesh, frames, config=None):
+    """
+    根据配置文件将眨眼动画应用到网格对象
+    
+    :param mesh: 网格对象
+    :param frames: 包含帧数据的字典 {形态键名: [{frame: 帧数, value: 值}]}
+    :param config: 配置文件数据
+    """
+    # 获取眨眼形态键名称
+    if config:
+        blink_shape_key = config.get('shape_keys', {}).get('blink', 'まばたき')
+    else:
+        blink_shape_key = 'まばたき'
+    
+    for shape_key_name, keyframes in frames.items():
+        # 只处理配置中指定的眨眼形态键
+        if shape_key_name == blink_shape_key:
+            # 查找形态键
+            shape_key = None
+            for key_block in mesh.data.shape_keys.key_blocks:
+                if key_block.name == shape_key_name:
+                    shape_key = key_block
+                    break
+            
+            if shape_key:
+                # 清除现有关键帧 - 使用keyframe_delete方法
+                # 获取所有关键帧的帧数
+                frame_numbers = set()
+                for keyframe in keyframes:
+                    frame_numbers.add(keyframe['frame'])
+                
+                # 删除指定帧数的关键帧
+                for frame in frame_numbers:
+                    try:
+                        shape_key.keyframe_delete(data_path="value", frame=frame)
+                    except RuntimeError:
+                        # 关键帧不存在时忽略错误
+                        pass
+                
+                # 添加关键帧
+                for keyframe in keyframes:
+                    shape_key.value = keyframe['value']
+                    shape_key.keyframe_insert(data_path="value", frame=keyframe['frame'])
+                    
+                # 更新动画数据
+                mesh.data.update_tag()
+
+
+def register():
+    """注册眨眼面板相关类"""
+    bpy.utils.register_class(RandomBlinkPanel)
+    bpy.utils.register_class(ImportBlinkConfigOperator)
+    bpy.utils.register_class(RandomBlinkOperator)
+
+
+def unregister():
+    """注销眨眼面板相关类"""
+    bpy.utils.unregister_class(RandomBlinkPanel)
+    bpy.utils.unregister_class(ImportBlinkConfigOperator)
+    bpy.utils.unregister_class(RandomBlinkOperator)

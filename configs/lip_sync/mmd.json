@@ -1,0 +1,40 @@
+{
+  "name": "MMD Lip Sync",
+  "description": "Standard MMD lip sync configuration",
+  "version": "1.0",
+  "author": "Whisky Helper",
+  "shape_keys": {
+    "あ": "あ",
+    "い": "い", 
+    "う": "う",
+    "え": "え",
+    "お": "お",
+    "ん": "ん"
+  },
+  "adjustment_rules": {
+    "あ": {
+      "priority": 1.0,
+      "adjustment_factor": 1.2
+    },
+    "お": {
+      "priority": 1.0,
+      "adjustment_factor": 1.2
+    },
+    "い": {
+      "priority": 0.9,
+      "adjustment_factor": 0.9
+    },
+    "う": {
+      "priority": 0.9,
+      "adjustment_factor": 0.9
+    },
+    "え": {
+      "priority": 0.9,
+      "adjustment_factor": 0.9
+    },
+    "ん": {
+      "priority": 0.3,
+      "adjustment_factor": 1.0
+    }
+  }
+}

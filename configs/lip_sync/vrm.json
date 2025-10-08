@@ -1,0 +1,40 @@
+{
+  "name": "VRM Lip Sync",
+  "description": "VRM model lip sync configuration",
+  "version": "1.0",
+  "author": "Whisky Helper",
+  "shape_keys": {
+    "A": "A",
+    "I": "I", 
+    "U": "U",
+    "E": "E",
+    "O": "O",
+    "N": "N"
+  },
+  "adjustment_rules": {
+    "A": {
+      "priority": 1.0,
+      "adjustment_factor": 1.2
+    },
+    "O": {
+      "priority": 1.0,
+      "adjustment_factor": 1.2
+    },
+    "I": {
+      "priority": 0.9,
+      "adjustment_factor": 0.9
+    },
+    "U": {
+      "priority": 0.9,
+      "adjustment_factor": 0.9
+    },
+    "E": {
+      "priority": 0.9,
+      "adjustment_factor": 0.9
+    },
+    "N": {
+      "priority": 0.3,
+      "adjustment_factor": 1.0
+    }
+  }
+}

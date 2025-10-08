@@ -10,13 +10,15 @@ from ..api.scene.mmd_set import (lips_audio_path, lips_start_frame, buffer_frame
                                  approach_speed, db_threshold, \
                                  rms_threshold, max_morph_value,
                                  blink_start_frame, blink_end_frame,
-                                 blinking_frequency, blinking_wave_ratio)
+                                 blinking_frequency, blinking_wave_ratio,
+                                 lips_config_selection, lips_custom_config_path,
+                                 blink_config_selection, blink_custom_config_path)
 from ..api.scene.render_preset_scene import (
     resolution_preset, aspect_ratio_preset, orientation_preset)
 from ..api.ui.about import AboutPanel
 from ..api.ui.camera_set_panel import CameraSetPanel
-from ..api.ui.mmd_blink_panel import RandomBlinkOperator, RandomBlinkPanel
-from ..api.ui.mmd_set_panel import MMDHelperPanel, GenLipsOperator
+from ..api.ui.mmd_blink_panel import RandomBlinkOperator, RandomBlinkPanel, ImportBlinkConfigOperator, OpenBlinkConfigFolderOperator
+from ..api.ui.mmd_set_panel import MMDHelperPanel, GenLipsOperator, ImportLipsConfigOperator, OpenLipsConfigFolderOperator
 from ..api.ui.render_preset_panel import RenderPresetPanel
 
 
@@ -36,6 +38,10 @@ class AddonManager:
         CameraApplySettingsOperator,
         GenLipsOperator,
         RandomBlinkOperator,
+        ImportBlinkConfigOperator,
+        OpenBlinkConfigFolderOperator,
+        ImportLipsConfigOperator,
+        OpenLipsConfigFolderOperator,
         RenderPresetPanel,
         CameraSetPanel,
         MMDHelperPanel,
@@ -93,6 +99,8 @@ class AddonManager:
 
         # MMD
         scene.lips_audio_path = lips_audio_path
+        scene.lips_config_selection = lips_config_selection
+        scene.lips_custom_config_path = lips_custom_config_path
         scene.lips_start_frame = lips_start_frame
         scene.buffer_frame = buffer_frame
         scene.approach_speed = approach_speed
@@ -101,6 +109,8 @@ class AddonManager:
         scene.max_morph_value = max_morph_value
 
         # MMD wink
+        scene.blink_config_selection = blink_config_selection
+        scene.blink_custom_config_path = blink_custom_config_path
         scene.blink_start_frame = blink_start_frame
         scene.blink_end_frame = blink_end_frame
         scene.blinking_frequency = blinking_frequency
@@ -125,6 +135,10 @@ class AddonManager:
             del scene.camera_settings
         if hasattr(scene, 'lips_audio_path'):
             del scene.lips_audio_path
+        if hasattr(scene, 'lips_config_selection'):
+            del scene.lips_config_selection
+        if hasattr(scene, 'lips_custom_config_path'):
+            del scene.lips_custom_config_path
         if hasattr(scene, 'lips_start_frame'):
             del scene.lips_start_frame
         if hasattr(scene, 'buffer_frame'):
@@ -137,6 +151,10 @@ class AddonManager:
             del scene.rms_threshold
         if hasattr(scene, 'max_morph_value'):
             del scene.max_morph_value
+        if hasattr(scene, 'blink_config_selection'):
+            del scene.blink_config_selection
+        if hasattr(scene, 'blink_custom_config_path'):
+            del scene.blink_custom_config_path
         if hasattr(scene, 'blink_start_frame'):
             del scene.blink_start_frame
         if hasattr(scene, 'blink_end_frame'):

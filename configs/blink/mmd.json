@@ -1,0 +1,9 @@
+{
+  "name": "MMD Blink",
+  "description": "Standard MMD blink configuration",
+  "version": "1.0",
+  "author": "Whisky Helper",
+  "shape_keys": {
+    "blink": "まばたき"
+  }
+}
