@@ -1,4 +1,4 @@
-# half_bottled_blender_plugin
+# HBR MMD Tools
 
 [![Pylint](https://github.com/skys-mission/whisky_helper_for_blender/actions/workflows/pylint.yml/badge.svg?branch=main)](https://github.com/skys-mission/whisky_helper_for_blender/actions/workflows/pylint.yml)
 [![CodeQL Advanced](https://github.com/skys-mission/whisky_helper_for_blender/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/skys-mission/whisky_helper_for_blender/actions/workflows/codeql.yml)
@@ -6,16 +6,14 @@
 
 其它语言：[English](README.md), [日本語](README_ja.md)
 
-一个blender的动画视频爱好者做的小插件。主要功能：MMD口型生成（计划拓展），MMD眨眼生成等功能。
+一个面向 MMD 工作流的 Blender 插件，主要提供 MMD 口型生成、随机眨眼及相关辅助功能。
 
-即将更名为：half_bottled_blender_plugin，预计对相关功能都进行一定的优化迭代。
+本项目现更名为 `HBR MMD Tools`，原名为 `whisky_helper_for_blender`。
 
-原：whisky_helper_for_blender插件，主要功能是生成MMD模型的口型关键帧。
-
-实际上只是我之前做MMD视频时，自己搞的小东西，可能会有一些我常用的小功能，之后不一定再开发维护。
+`HBR` 来自 `Half-Bottled Reverie`，`MMD Tools` 也更直接地说明了插件当前的功能定位。
 
 <!-- TOC -->
-* [half_bottled_blender_plugin](#half_bottled_blender_plugin)
+* [HBR MMD Tools](#hbr-mmd-tools)
   * [Download](#download)
   * [功能](#功能)
     * [MMD口型生成](#mmd口型生成)

@@ -1,4 +1,4 @@
-# half_bottled_blender_plugin
+# HBR MMD Tools
 
 [![Pylint](https://github.com/skys-mission/whisky_helper_for_blender/actions/workflows/pylint.yml/badge.svg?branch=main)](https://github.com/skys-mission/whisky_helper_for_blender/actions/workflows/pylint.yml)
 [![CodeQL Advanced](https://github.com/skys-mission/whisky_helper_for_blender/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/skys-mission/whisky_helper_for_blender/actions/workflows/codeql.yml)
@@ -6,16 +6,14 @@
 
 他の言語：[English](README.md), [简体中文](README_zh.md)
 
-Blenderのアニメーション動画愛好家が作成したBlender用アドオンです。主な機能：MMD口形生成（拡張予定）、MMDまばたき生成などの機能。
+MMD ワークフロー向けの Blender アドオンです。主な機能は MMD 口形生成、ランダムまばたき、関連補助ツールです。
 
-名称変更予定：half_bottled_blender_plugin、関連機能の最適化とイテレーション更新を予定。
+このプロジェクトは `HBR MMD Tools` に改名しました。旧名は `whisky_helper_for_blender` です。
 
-元々：whisky_helper_for_blenderプラグインで、主にMMDモデルの口形キーフレームの生成に使用されていました。
-
-実際には、以前MMD動画を作成していた時に自分で作った小さなツールで、自分がよく使う機能がいくつか含まれているかもしれませんが、今後は開発・メンテナンスを継続するかどうかは分かりません。
+`HBR` は `Half-Bottled Reverie` に由来し、`MMD Tools` は現在の機能と用途をより直接的に表しています。
 
 <!-- TOC -->
-* [half_bottled_blender_plugin](#half_bottled_blender_plugin)
+* [HBR MMD Tools](#hbr-mmd-tools)
   * [ダウンロード](#ダウンロード)
   * [機能](#機能)
     * [MMD口形生成](#mmd口形生成)

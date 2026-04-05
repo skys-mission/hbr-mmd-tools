@@ -1,4 +1,4 @@
-# half_bottled_blender_plugin
+# HBR MMD Tools
 
 [![Pylint](https://github.com/skys-mission/whisky_helper_for_blender/actions/workflows/pylint.yml/badge.svg?branch=main)](https://github.com/skys-mission/whisky_helper_for_blender/actions/workflows/pylint.yml)
 [![CodeQL Advanced](https://github.com/skys-mission/whisky_helper_for_blender/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/skys-mission/whisky_helper_for_blender/actions/workflows/codeql.yml)
@@ -6,16 +6,14 @@
 
 Other languages: [简体中文](README_zh.md), [日本語](README_ja.md)
 
-A Blender add-on made by an animation video enthusiast for Blender. Main features: MMD lip-sync generation (planned expansion), MMD blinking generation, and other functions.
+A Blender add-on for MMD workflows. Main features include MMD lip-sync generation, random blinking, and related utility tools.
 
-Will be renamed to: half_bottled_blender_plugin, with planned optimization and iteration of related functions.
+This project is renamed to `HBR MMD Tools`. The previous name was `whisky_helper_for_blender`.
 
-Originally: the whisky_helper_for_blender plugin, primarily used for generating lip-sync keyframes for MMD models.
-
-Actually, it's just a small tool I made for myself when creating MMD videos. It may include some features I commonly use, but I may not continue developing or maintaining it.
+`HBR` comes from `Half-Bottled Reverie`, and `MMD Tools` reflects the add-on's current focus more directly.
 
 <!-- TOC -->
-* [half_bottled_blender_plugin](#half_bottled_blender_plugin)
+* [HBR MMD Tools](#hbr-mmd-tools)
   * [Download](#download)
   * [Features](#features)
     * [MMD Lip-Sync Generation](#mmd-lip-sync-generation)
