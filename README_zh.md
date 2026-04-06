@@ -6,11 +6,17 @@
 
 其它语言：[English](README.md), [日本語](README_ja.md)
 
-一个面向 MMD 工作流的 Blender 插件，主要提供 MMD 口型生成、随机眨眼及相关辅助功能。
+一个面向 MMD 工作流的 Blender 插件，提供 MMD 口型生成、随机眨眼、形态键辅助和面向 MikuMikuDance 风格角色的 Blender 工作流工具。
 
 本项目现更名为 `HBR MMD Tools`，此前以另一个插件名发布。
 
 `HBR` 来自 `Half-Bottled Reverie`，`MMD Tools` 也更直接地说明了插件当前的功能定位。
+
+> 当前状态
+>
+> `v0.5.0` 即将发布，并会带来大量更新。
+>
+> 如果当前更需要相对成熟的版本，可以先使用 `v0.3.2`。
 
 <!-- TOC -->
 * [HBR MMD Tools](#hbr-mmd-tools)

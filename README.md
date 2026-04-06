@@ -6,11 +6,17 @@
 
 Other languages: [简体中文](README_zh.md), [日本語](README_ja.md)
 
-A Blender add-on for MMD workflows. Main features include MMD lip-sync generation, random blinking, and related utility tools.
+A Blender add-on for MMD workflows, including MMD lip sync generation, random blinking, shape key utilities, and workflow tools for MikuMikuDance-style characters in Blender.
 
 This project is renamed to `HBR MMD Tools`. It was previously published under a different add-on name.
 
 `HBR` comes from `Half-Bottled Reverie`, and `MMD Tools` reflects the add-on's current focus more directly.
+
+> Status
+>
+> `v0.5.0` is coming soon and will include major updates.
+>
+> If you need a more established release right now, please use `v0.3.2` first.
 
 <!-- TOC -->
 * [HBR MMD Tools](#hbr-mmd-tools)
