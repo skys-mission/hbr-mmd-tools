@@ -6,6 +6,7 @@ Blender Scene文件
 import bpy  # pylint: disable=import-error
 
 from ...core.config_manager import get_config_manager
+from ...core.lip_sync_profiles import DEFAULT_LIP_SYNC_PRESET, get_lip_sync_preset_values
 
 lips_audio_path = bpy.props.StringProperty(
     name="Audio Path",
@@ -65,13 +66,32 @@ blink_custom_config_path = bpy.props.StringProperty(
 
 lips_start_frame = bpy.props.IntProperty(name="Start Frame", default=1)
 
+lips_generation_preset = bpy.props.EnumProperty(
+    name="Preset",
+    description="Choose the overall lip sync style",
+    items=(
+        ("natural", "Natural", "Smooth and balanced motion for most dialogue"),
+        ("clear", "Clear Speech", "Sharper mouth motion for clearer articulation"),
+        ("soft", "Soft Motion", "Smaller and softer mouth motion"),
+    ),
+    default=DEFAULT_LIP_SYNC_PRESET,
+)
+
+lips_use_custom_tuning = bpy.props.BoolProperty(
+    name="Custom Tuning",
+    description="Use manual advanced tuning instead of the preset",
+    default=False,
+)
+
+_preset_defaults = get_lip_sync_preset_values(DEFAULT_LIP_SYNC_PRESET)
+
 buffer_frame = bpy.props.FloatProperty(
     name="Delayed Opening",
     description="The mouth does not open immediately upon recognition;"
                 " the unit is in milliseconds,"
                 " and the buffer value is calculated"
                 " based on the acceleration parameters for opening the mouth",
-    default=0.15,
+    default=_preset_defaults["buffer"],
     min=0.02,
     max=1.0)
 
@@ -79,7 +99,7 @@ approach_speed = bpy.props.FloatProperty(
     name="Speed Up Opening",
     description="The larger this parameter is, "
                 "the greater the value of the morph key for delayed mouth opening will be.",
-    default=1.6,
+    default=_preset_defaults["approach_speed"],
     min=1,
     max=10,
 )
@@ -87,14 +107,14 @@ approach_speed = bpy.props.FloatProperty(
 db_threshold = bpy.props.FloatProperty(
     name="DB Threshold",
     description="Minimum threshold for audio volume detection",
-    default=-50.00,
+    default=_preset_defaults["db_threshold"],
     min=-65.00,
     max=0)
 
 rms_threshold = bpy.props.FloatProperty(
     name="RMS Threshold",
     description="Minimum threshold for audio root mean square identification",
-    default=0.05,
+    default=_preset_defaults["rms_threshold"],
     min=0.001,
     max=1.0,
 )
@@ -102,7 +122,7 @@ rms_threshold = bpy.props.FloatProperty(
 max_morph_value = bpy.props.FloatProperty(
     name="Max Morph Value",
     description="Threshold for the maximum value of the morphological key",
-    default=0.97,
+    default=_preset_defaults["max_morph_value"],
     min=0.01,
     max=1.0,
 )

@@ -48,13 +48,36 @@ class MMDHelperPanel(bpy.types.Panel):  # pylint: disable=too-few-public-methods
 
         layout.prop(scene, "lips_audio_path")
         layout.prop(scene, "lips_start_frame")
+        layout.prop(scene, "lips_generation_preset")
+
+        layout.operator("mmd.gen_lips", text="Generate Lip Sync")
+
+
+class MMDLipAdvancedPanel(bpy.types.Panel):  # pylint: disable=too-few-public-methods
+    """口型高级调参面板"""
+    bl_label = "Advanced"
+    bl_idname = "OBJECT_PT_MMD_Lip_Advanced"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_category = 'HBR MMD Tools'
+    bl_parent_id = "OBJECT_PT_MMD_Helper"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        """绘制高级口型参数。"""
+        layout = self.layout
+        scene = context.scene
+
+        layout.prop(scene, "lips_use_custom_tuning")
+        if not scene.lips_use_custom_tuning:
+            layout.label(text="Using preset tuning", icon='INFO')
+            return
+
         layout.prop(scene, "db_threshold")
         layout.prop(scene, "rms_threshold")
         layout.prop(scene, "buffer_frame")
         layout.prop(scene, "approach_speed")
         layout.prop(scene, "max_morph_value")
-
-        layout.operator("mmd.gen_lips")
 
 
 class MMDLipConfigPanel(bpy.types.Panel):  # pylint: disable=too-few-public-methods
@@ -166,8 +189,8 @@ class GenLipsOperator(bpy.types.Operator):  # pylint: disable=too-few-public-met
     ...
     """
     bl_idname = "mmd.gen_lips"
-    bl_label = "Gen Lips"
-    bl_description = ""
+    bl_label = "Generate Lip Sync"
+    bl_description = "Generate lip sync keyframes for the selected meshes"
 
     def execute(self, context):
         """

@@ -6,7 +6,8 @@
 from ..api.bridge import Bridge
 from ..api.handler.camera import CameraApplySettingsOperator
 from ..api.scene.camera_set_scene import CameraSettingsProperties
-from ..api.scene.mmd_set import (lips_audio_path, lips_start_frame, buffer_frame,
+from ..api.scene.mmd_set import (lips_audio_path, lips_start_frame, lips_generation_preset,
+                                 lips_use_custom_tuning, buffer_frame,
                                  approach_speed, db_threshold, \
                                  rms_threshold, max_morph_value,
                                  blink_start_frame, blink_end_frame,
@@ -27,6 +28,7 @@ from ..api.ui.mmd_blink_panel import (
 from ..api.ui.mmd_set_panel import (
     MMDHelperPanel,
     MMDLipConfigPanel,
+    MMDLipAdvancedPanel,
     GenLipsOperator,
     ImportLipsConfigOperator,
     OpenLipsConfigFolderOperator,
@@ -58,6 +60,7 @@ class AddonManager:
         CameraSetPanel,
         MMDHelperPanel,
         MMDLipConfigPanel,
+        MMDLipAdvancedPanel,
         RandomBlinkPanel,
         RandomBlinkConfigPanel,
         AboutPanel,
@@ -116,6 +119,8 @@ class AddonManager:
         scene.lips_config_selection = lips_config_selection
         scene.lips_custom_config_path = lips_custom_config_path
         scene.lips_start_frame = lips_start_frame
+        scene.lips_generation_preset = lips_generation_preset
+        scene.lips_use_custom_tuning = lips_use_custom_tuning
         scene.buffer_frame = buffer_frame
         scene.approach_speed = approach_speed
         scene.db_threshold = db_threshold
@@ -155,6 +160,10 @@ class AddonManager:
             del scene.lips_custom_config_path
         if hasattr(scene, 'lips_start_frame'):
             del scene.lips_start_frame
+        if hasattr(scene, 'lips_generation_preset'):
+            del scene.lips_generation_preset
+        if hasattr(scene, 'lips_use_custom_tuning'):
+            del scene.lips_use_custom_tuning
         if hasattr(scene, 'buffer_frame'):
             del scene.buffer_frame
         if hasattr(scene, 'approach_speed'):

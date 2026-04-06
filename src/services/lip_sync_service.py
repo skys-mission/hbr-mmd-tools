@@ -7,6 +7,7 @@
 from ..audio.lips import Lips
 from ..core.config_manager import get_config_manager
 from ..core.config_schema import CANONICAL_LIP_SYNC_KEYS
+from ..core.lip_sync_profiles import get_lip_sync_preset_values
 from .selection_service import (
     clear_shape_key_keyframes_in_range,
     find_selected_meshes_with_shape_keys,
@@ -30,15 +31,17 @@ def generate_lip_sync(context):
     scene = context.scene
     fps = scene.render.fps
     config = load_lip_sync_config(scene.lips_config_selection)
+    tuning = _resolve_lip_sync_tuning(scene)
     lips = Lips.mmd_lips_gen(
         wav_path=scene.lips_audio_path,
-        buffer=scene.buffer_frame,
-        approach_speed=scene.approach_speed,
-        db_threshold=scene.db_threshold,
-        rms_threshold=scene.rms_threshold,
-        max_morph_value=scene.max_morph_value,
+        buffer=tuning["buffer"],
+        approach_speed=tuning["approach_speed"],
+        db_threshold=tuning["db_threshold"],
+        rms_threshold=tuning["rms_threshold"],
+        max_morph_value=tuning["max_morph_value"],
         start_frame=scene.lips_start_frame,
         fps=fps,
+        anticipation_scale=tuning["anticipation_scale"],
     )
     meshes = find_mesh_with_config(context, config)
     for mesh in meshes:
@@ -48,6 +51,19 @@ def generate_lip_sync(context):
         "mesh_count": len(meshes),
         "lips": lips,
     }
+
+
+def _resolve_lip_sync_tuning(scene):
+    if getattr(scene, "lips_use_custom_tuning", False):
+        return {
+            "buffer": scene.buffer_frame,
+            "approach_speed": scene.approach_speed,
+            "db_threshold": scene.db_threshold,
+            "rms_threshold": scene.rms_threshold,
+            "max_morph_value": scene.max_morph_value,
+            "anticipation_scale": 1.0,
+        }
+    return get_lip_sync_preset_values(scene.lips_generation_preset)
 
 
 def find_mesh_with_config(context, config):
@@ -65,146 +81,89 @@ def set_lips_to_mesh_with_config(mesh, lips, start_frame, config):  # pylint: di
     """根据配置将 lips 数据应用到网格模型上。"""
     shape_key_mapping = config.get("shape_keys", {})
     adjustment_rules = config.get("adjustment_rules", {})
-    config_morph_list = list(shape_key_mapping.values())
+    target_tracks = _build_target_tracks(lips, shape_key_mapping, adjustment_rules)
 
-    max_frame = 0
-    for _, morph_frames in lips.items():
-        for morph_frame in morph_frames:
-            max_frame = max(morph_frame["frame"], max_frame)
+    start = float(max(start_frame, 1))
+    end = start
+    for track in target_tracks.values():
+        for keyframe in track:
+            end = max(end, float(keyframe["frame"]))
 
-    start = max(start_frame, 1)
-    end = max(max_frame, start_frame)
-    existing_morphs = [
+    existing_morphs = {
         key.name for key in mesh.data.shape_keys.key_blocks
-    ] if mesh.data.shape_keys else []
+    } if mesh.data.shape_keys else set()
 
-    for morph_key in config_morph_list:
+    for morph_key in target_tracks:
         if morph_key in existing_morphs:
             clear_shape_key_keyframes_in_range(mesh, morph_key, start, end)
 
-    for source_key, target_morph_key in shape_key_mapping.items():
-        if target_morph_key in existing_morphs:
-            existing_frames = [item["frame"] for item in lips.get(source_key, [])]
-            if start_frame not in existing_frames:
-                set_shape_key_value(mesh, target_morph_key, 0.0, start_frame, "KEYFRAME")
-
-    for source_key in CANONICAL_LIP_SYNC_KEYS:
-        morph_frames = lips.get(source_key, [])
-        target_morph_key = shape_key_mapping.get(source_key, source_key)
+    for target_morph_key, morph_frames in target_tracks.items():
         if target_morph_key not in existing_morphs:
             Log.warning(f"Target shape key '{target_morph_key}' not found in mesh")
             continue
 
-        adjustment_rule = adjustment_rules.get(source_key, {})
-        priority = adjustment_rule.get("priority", 1.0)
-        adjustment_factor = adjustment_rule.get("adjustment_factor", 1.0)
-        valid_frames = (item for item in morph_frames if item["frame"] >= start_frame)
-
-        for morph_frame in valid_frames:
-            adjusted_value = _calculate_adjusted_value(
-                mesh,
-                morph_frame,
-                config_morph_list,
-                existing_morphs,
-                target_morph_key,
-                adjustment_factor,
-                priority,
-            )
-
+        for morph_frame in morph_frames:
+            if morph_frame["frame"] < start:
+                continue
             set_shape_key_value(
                 obj=mesh,
                 shape_key_name=target_morph_key,
-                value=adjusted_value,
+                value=morph_frame["value"],
                 frame=morph_frame["frame"],
                 f_type=morph_frame["frame_type"],
             )
-            Log.info(
-                f"Set shape key '{target_morph_key}' "
-                f"with frame {morph_frame['frame']} and value {adjusted_value}"
-            )
 
 
-def _calculate_adjusted_value(
-    mesh,
-    morph_frame,
-    config_morph_list,
-    existing_morphs,
-    target_morph_key,
-    adjustment_factor,
-    priority,
-):  # pylint: disable=too-many-arguments,too-many-positional-arguments
-    if morph_frame["value"] <= 0:
-        return 0
+def _build_target_tracks(lips, shape_key_mapping, adjustment_rules):
+    target_tracks = {}
+    for source_key in CANONICAL_LIP_SYNC_KEYS:
+        target_morph_key = shape_key_mapping.get(source_key, source_key)
+        target_track = target_tracks.setdefault(target_morph_key, {})
+        adjustment_rule = adjustment_rules.get(source_key, {})
 
-    sum_values = 0.0
-    count = 0
-    for morph in config_morph_list:
-        if morph not in existing_morphs or morph == target_morph_key:
-            continue
-        current_val = get_shape_key_value_at_frame(
-            mesh,
-            morph,
-            morph_frame["frame"],
-        )
-        if current_val is None:
-            continue
-        sum_values += current_val
-        count += 1
+        for morph_frame in lips.get(source_key, []):
+            adjusted_value = _apply_adjustment_rule(morph_frame["value"], adjustment_rule)
+            frame = round(float(morph_frame["frame"]), 3)
+            frame_key = f"{frame:.3f}"
+            existing_frame = target_track.get(frame_key)
+            if existing_frame is None or adjusted_value >= existing_frame["value"]:
+                target_track[frame_key] = {
+                    "frame": frame,
+                    "value": adjusted_value,
+                    "frame_type": morph_frame.get("frame_type", "sample"),
+                }
 
-    adjusted_value = morph_frame["value"]
-    if count > 0:
-        adjusted_value -= (sum_values / count) * adjustment_factor
-        if count == 1:
-            adjusted_value = morph_frame["value"] - (sum_values / count)
-
-    adjusted_value *= priority
-    adjusted_value = max(adjusted_value, 0.0)
-    adjusted_value = min(adjusted_value, 0.99)
-    return adjusted_value
+    return {
+        target_key: sorted(frame_map.values(), key=lambda item: item["frame"])
+        for target_key, frame_map in target_tracks.items()
+    }
 
 
-def set_shape_key_value(obj, shape_key_name, value, frame, f_type):
+def _apply_adjustment_rule(value, rule):
+    base_value = max(0.0, float(value))
+    if base_value <= 0.0:
+        return 0.0
+
+    priority = float(rule.get("priority", 1.0))
+    adjustment_factor = float(rule.get("adjustment_factor", 1.0))
+    if adjustment_factor > 0.0 and abs(adjustment_factor - 1.0) > 1e-6:
+        base_value = base_value ** (1.0 / adjustment_factor)
+
+    adjusted_value = base_value * priority
+    return min(max(adjusted_value, 0.0), 0.99)
+
+
+def set_shape_key_value(obj, shape_key_name, value, frame, f_type):  # pylint: disable=unused-argument
     """设置指定对象的形态键值。"""
-    if obj and obj.type == "MESH":  # pylint: disable=too-many-nested-blocks
-        shape_keys = obj.data.shape_keys
-        if shape_keys and shape_key_name in shape_keys.key_blocks:
-            shape_key = shape_keys.key_blocks[shape_key_name]
-            anim_data = shape_key.id_data.animation_data
-            has_existing_key = False
-            if anim_data and anim_data.action:
-                for fcu in anim_data.action.fcurves:
-                    if fcu.data_path == f'key_blocks["{shape_key.name}"].value':
-                        for keyframe in fcu.keyframe_points:
-                            if keyframe.co[0] == frame:
-                                has_existing_key = True
-            if round(shape_key.value, 1) == 0.0 and has_existing_key:
-                return
-            if f_type in ("buffer_start", "buffer_end"):
-                shape_key.value = max(value, shape_key.value)
-            else:
-                shape_key.value = value
-            shape_key.keyframe_insert(data_path="value", frame=frame)
-        else:
-            Log.warning(f"The shape key '{shape_key_name}' does not exist.")
-    else:
+    if not obj or obj.type != "MESH":
         Log.warning("The object is not of the mesh type.")
+        return
 
-
-def get_shape_key_value_at_frame(obj, shape_key_name, frame):
-    """获取指定对象的形态键在特定帧的值。"""
-    if obj and obj.type == "MESH":  # pylint: disable=too-many-nested-blocks
-        shape_keys = obj.data.shape_keys
-        if shape_keys and shape_key_name in shape_keys.key_blocks:
-            anim_data = shape_keys.animation_data
-            if anim_data and anim_data.action:
-                for fcu in anim_data.action.fcurves:
-                    if fcu.data_path == f'key_blocks["{shape_key_name}"].value':
-                        for keyframe in fcu.keyframe_points:
-                            if keyframe.co[0] == frame:
-                                return keyframe.co[1]
-                        return fcu.evaluate(frame)
-            return shape_keys.key_blocks[shape_key_name].value
+    shape_keys = obj.data.shape_keys
+    if not shape_keys or shape_key_name not in shape_keys.key_blocks:
         Log.warning(f"The shape key '{shape_key_name}' does not exist.")
-        return None
-    Log.warning("The object is not of the mesh type.")
-    return None
+        return
+
+    shape_key = shape_keys.key_blocks[shape_key_name]
+    shape_key.value = value
+    shape_key.keyframe_insert(data_path="value", frame=frame)
