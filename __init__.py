@@ -4,18 +4,19 @@
 Blender Addon 入口
 """
 from .src.core.addon import AddonManager
+from .src.core.compat import ensure_supported_blender_version
 
 # 注册插件信息
 bl_info = {
-    "name": "Whisky Helper",
+    "name": "HBR MMD Tools",
     "author": "SoyWhisky, github.com/skys-mission",
     "version": (0, 3, 2),
-    "blender": (3, 6, 0),
-    "location": "View3D > N-Panel  > Whisky Helper",
-    "description": "Whisky Helper.",
+    "blender": (4, 2, 0),
+    "location": "View3D > Sidebar > HBR MMD Tools",
+    "description": "Blender add-on for MMD lip sync, random blinking, and related workflow tools.",
     "category": "3D View",
-    "doc_url": "https://soywhisky.com/doc/blender/addon/whisky_helper_for_blender",
-    "tracker_url": "https://github.com/skys-mission/whisky_helper_for_blender/issues"
+    "doc_url": "https://github.com/skys-mission/hbr-mmd-tools#readme",
+    "tracker_url": "https://github.com/skys-mission/hbr-mmd-tools/issues"
 }
 
 
@@ -25,6 +26,7 @@ def register():
 
     本函数在插件加载时被调用，用于设置插件名称并初始化插件。
     """
+    ensure_supported_blender_version()
     AddonManager.set_addon_name(__name__)
     AddonManager.init_addon()
 

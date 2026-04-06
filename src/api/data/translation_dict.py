@@ -69,6 +69,7 @@ translation_zh_map = {
     ("*", "f/22 minimum aperture"): "f/22 最小光圈",
     ("*", "Requires a strong light environment"): "需要强光环境",
     ("*", "Slightly Blurred. Suitable for average lighting conditions"): "轻微虚化，适合一般光照条件",
+    ("*", "HBR MMD Tools"): "HBR MMD工具",
     ("*", "Whisky Helper"): "Whisky助手",
     ("*", "default"): "默认",
     ("*", "Start Frame"): "起始帧",

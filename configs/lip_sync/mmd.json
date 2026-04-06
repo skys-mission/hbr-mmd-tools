@@ -4,35 +4,35 @@
   "version": "1.0",
   "author": "Whisky Helper",
   "shape_keys": {
-    "あ": "あ",
-    "い": "い", 
-    "う": "う",
-    "え": "え",
-    "お": "お",
-    "ん": "ん"
+    "a": "あ",
+    "i": "い",
+    "u": "う",
+    "e": "え",
+    "o": "お",
+    "n": "ん"
   },
   "adjustment_rules": {
-    "あ": {
+    "a": {
       "priority": 1.0,
       "adjustment_factor": 1.2
     },
-    "お": {
+    "o": {
       "priority": 1.0,
       "adjustment_factor": 1.2
     },
-    "い": {
+    "i": {
       "priority": 0.9,
       "adjustment_factor": 0.9
     },
-    "う": {
+    "u": {
       "priority": 0.9,
       "adjustment_factor": 0.9
     },
-    "え": {
+    "e": {
       "priority": 0.9,
       "adjustment_factor": 0.9
     },
-    "ん": {
+    "n": {
       "priority": 0.3,
       "adjustment_factor": 1.0
     }

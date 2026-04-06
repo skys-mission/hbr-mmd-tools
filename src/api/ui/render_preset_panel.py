@@ -20,7 +20,7 @@ class RenderPresetPanel(bpy.types.Panel):  # pylint: disable=too-few-public-meth
     # 面板显示的区域类型
     bl_region_type = 'UI'
     # 面板显示的类别，用于在UI中分组面板
-    bl_category = 'Whisky Helper'
+    bl_category = 'HBR MMD Tools'
     # 面板的显示顺序
     bl_order = 1
 

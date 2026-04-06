@@ -1,8 +1,8 @@
 # HBR MMD Tools
 
-[![Pylint](https://github.com/skys-mission/whisky_helper_for_blender/actions/workflows/pylint.yml/badge.svg?branch=main)](https://github.com/skys-mission/whisky_helper_for_blender/actions/workflows/pylint.yml)
-[![CodeQL Advanced](https://github.com/skys-mission/whisky_helper_for_blender/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/skys-mission/whisky_helper_for_blender/actions/workflows/codeql.yml)
-[![Bandit](https://github.com/skys-mission/whisky_helper_for_blender/actions/workflows/bandit.yml/badge.svg)](https://github.com/skys-mission/whisky_helper_for_blender/actions/workflows/bandit.yml)
+[![Pylint](https://github.com/skys-mission/hbr-mmd-tools/actions/workflows/pylint.yml/badge.svg?branch=main)](https://github.com/skys-mission/hbr-mmd-tools/actions/workflows/pylint.yml)
+[![CodeQL Advanced](https://github.com/skys-mission/hbr-mmd-tools/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/skys-mission/hbr-mmd-tools/actions/workflows/codeql.yml)
+[![Bandit](https://github.com/skys-mission/hbr-mmd-tools/actions/workflows/bandit.yml/badge.svg)](https://github.com/skys-mission/hbr-mmd-tools/actions/workflows/bandit.yml)
 
 其它语言：[English](README.md), [日本語](README_ja.md)
 
@@ -33,7 +33,7 @@
 
 ## Download
 
-https://github.com/skys-mission/half_bottled_blender_plugin/releases
+https://github.com/skys-mission/hbr-mmd-tools/releases
 
 中国大陆用户：
 

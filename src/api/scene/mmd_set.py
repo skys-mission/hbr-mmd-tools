@@ -18,9 +18,11 @@ def get_lips_config_files(self, context):
     """获取口型配置文件列表"""
     from ...core.config_manager import get_config_manager
     config_manager = get_config_manager()
-    config_files = config_manager.get_config_files('lip_sync')
-    # 返回格式: (identifier, name, description)
-    return [(config['name'], config['name'], f"{config['name']} ({config['type']})") for config in config_files]
+    config_files = config_manager.get_config_entries('lip_sync')
+    return [
+        (config['id'], config['display_name'], config['description'])
+        for config in config_files
+    ]
 
 lips_config_selection = bpy.props.EnumProperty(
     name="Lip Sync Config",
@@ -41,9 +43,11 @@ def get_blink_config_files(self, context):
     """获取眨眼配置文件列表"""
     from ...core.config_manager import get_config_manager
     config_manager = get_config_manager()
-    config_files = config_manager.get_config_files('blink')
-    # 返回格式: (identifier, name, description)
-    return [(config['name'], config['name'], f"{config['name']} ({config['type']})") for config in config_files]
+    config_files = config_manager.get_config_entries('blink')
+    return [
+        (config['id'], config['display_name'], config['description'])
+        for config in config_files
+    ]
 
 blink_config_selection = bpy.props.EnumProperty(
     name="Blink Config",

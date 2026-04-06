@@ -20,7 +20,7 @@ class CameraSetPanel(bpy.types.Panel):  # pylint: disable=too-few-public-methods
     # 指定面板显示的区域类型为"UI"
     bl_region_type = 'UI'
     # 将面板分类到"Tools"标签页下
-    bl_category = 'Whisky Helper'
+    bl_category = 'HBR MMD Tools'
     # 设置面板的显示顺序为2
     bl_order = 2
 

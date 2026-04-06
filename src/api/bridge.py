@@ -9,6 +9,7 @@ Copyright (c) 2025, https://github.com/skys-mission and SoyWhisky
 
 import bpy  # pylint: disable=import-error
 
+from ..core.compat import get_blender_version, is_blender_version_at_least
 from .data.local import LOCAL_CH_40, LOCAL_CH_36
 from .data.translation_dict import get_translation_zh_dict
 
@@ -33,8 +34,7 @@ class Bridge:  # pylint: disable=too-few-public-methods
             Returns:
                 tuple: 包含主要版本号、次要版本号和补丁号的元组。
             """
-            major, minor, patch = bpy.app.version
-            return major, minor, patch
+            return get_blender_version()
 
         @staticmethod
         def register_translations(addon_name):
@@ -45,7 +45,7 @@ class Bridge:  # pylint: disable=too-few-public-methods
                 addon_name (str): 插件名称。
             """
             translation_dict = get_translation_zh_dict(LOCAL_CH_36)
-            if Bridge.App.bl_version >= (4, 0, 0):
+            if is_blender_version_at_least((4, 0, 0)):
                 translation_dict = get_translation_zh_dict(LOCAL_CH_40)
             bpy.app.translations.register(addon_name, translation_dict)
 

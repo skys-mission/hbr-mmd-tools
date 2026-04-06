@@ -4,35 +4,35 @@
   "version": "1.0",
   "author": "Whisky Helper",
   "shape_keys": {
-    "A": "A",
-    "I": "I", 
-    "U": "U",
-    "E": "E",
-    "O": "O",
-    "N": "N"
+    "a": "A",
+    "i": "I",
+    "u": "U",
+    "e": "E",
+    "o": "O",
+    "n": "N"
   },
   "adjustment_rules": {
-    "A": {
+    "a": {
       "priority": 1.0,
       "adjustment_factor": 1.2
     },
-    "O": {
+    "o": {
       "priority": 1.0,
       "adjustment_factor": 1.2
     },
-    "I": {
+    "i": {
       "priority": 0.9,
       "adjustment_factor": 0.9
     },
-    "U": {
+    "u": {
       "priority": 0.9,
       "adjustment_factor": 0.9
     },
-    "E": {
+    "e": {
       "priority": 0.9,
       "adjustment_factor": 0.9
     },
-    "N": {
+    "n": {
       "priority": 0.3,
       "adjustment_factor": 1.0
     }

@@ -8,27 +8,17 @@ import os
 import sys
 from typing import List, Tuple
 import bpy  # pylint: disable=import-error
+from ..core.compat import get_bundled_python_lib_path
 
 def load_pkg():
     """
     ...
     """
     addon_dir = os.path.abspath(os.path.dirname(__file__))
-    
-    # 获取Blender版本
-    version = bpy.app.version
-    major, minor = version[0], version[1]
-    
-    # 根据版本选择不同的plib路径
-    # 原条件判断存在逻辑漏洞，优化后：
-    if (major == 3 and minor >= 6) or (major == 4 and minor == 0):
-        sys.path.append(os.path.join(addon_dir, 'plib310'))
-    elif major > 4 or (major == 4 and minor >= 1):
-        sys.path.append(os.path.join(addon_dir, 'plib311'))
-    else:
-        raise ValueError(f"Unsupported Blender version: {major}.{minor}")
-
-
+    _ = bpy.app.version
+    plib_path = get_bundled_python_lib_path(addon_dir)
+    if plib_path not in sys.path:
+        sys.path.append(plib_path)
 
 load_pkg()
 

@@ -19,7 +19,7 @@ class AboutPanel(bpy.types.Panel):  # pylint: disable=too-few-public-methods
     # 面板显示的区域类型
     bl_region_type = 'UI'
     # 面板显示的类别，用于在UI中分组面板
-    bl_category = 'Whisky Helper'
+    bl_category = 'HBR MMD Tools'
     # 面板的显示顺序
     bl_order = 5
 
@@ -39,13 +39,13 @@ class AboutPanel(bpy.types.Panel):  # pylint: disable=too-few-public-methods
         row = layout.row()
         row.alignment = 'CENTER'
         props = row.operator("wm.url_open", text="user doc", icon='URL')
-        props.url = "https://whiskyai.xyz/doc/blender/addon/whisky_helper"
+        props.url = "https://github.com/skys-mission/hbr-mmd-tools#readme"
         row.alignment = 'CENTER'
         props = row.operator("wm.url_open", text="open source", icon='URL')
-        props.url = "https://github.com/skys-mission/whisky_helper_for_blender"
+        props.url = "https://github.com/skys-mission/hbr-mmd-tools"
 
         row = layout.row()
-        row.label(text="author: 豆浆whisky")
+        row.label(text="author: 半瓶入梦")
 
         row = layout.row()
         row.label(text="QQ群：105619180")

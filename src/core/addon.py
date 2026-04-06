@@ -27,7 +27,7 @@ class AddonManager:
     插件管理器类。
     负责插件的初始化和卸载。
     """
-    _addon_name = "whisky_helper"
+    _addon_name = "hbr_mmd_tools"
     # 定义bl_classes元组，包含所有需要注册的类
     _bl_classes = (
         # 1.Properties(属性定义)
