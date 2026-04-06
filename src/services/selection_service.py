@@ -42,11 +42,25 @@ def clear_shape_key_keyframes_in_range(obj, shape_key_name, start_frame, end_fra
         return
 
     shape_key = shape_keys.key_blocks[shape_key_name]
-    for frame in range(start_frame, end_frame + 1):
-        try:
-            shape_key.keyframe_delete(data_path="value", frame=frame)
-        except RuntimeError:
-            pass
+    anim_data = shape_key.id_data.animation_data
+    if not anim_data or not anim_data.action:
+        return
+
+    data_path = f'key_blocks["{shape_key.name}"].value'
+    for fcurve in anim_data.action.fcurves:
+        if fcurve.data_path != data_path:
+            continue
+
+        for index in range(len(fcurve.keyframe_points) - 1, -1, -1):
+            keyframe = fcurve.keyframe_points[index]
+            if float(start_frame) <= keyframe.co[0] <= float(end_frame):
+                fcurve.keyframe_points.remove(keyframe)
+
+        if not fcurve.keyframe_points:
+            anim_data.action.fcurves.remove(fcurve)
+        else:
+            fcurve.update()
+        return
 
 
 def _collect_meshes_with_shape_keys(obj, shape_key_names, found_objects, seen):
