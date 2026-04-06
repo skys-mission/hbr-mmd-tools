@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2024, https://github.com/skys-mission and SoyMilkWhisky
+# Copyright (c) 2024, https://github.com/skys-mission and Half-Bottled Reverie
 """
 vosk
 """
@@ -63,4 +63,4 @@ def run_vosk(audio_path):
     return output_path
 
 # 示例使用
-# run_vosk("F:\\OBS_Video\\test_whiskyai_xyz_16000.wav")
+# run_vosk("F:\\OBS_Video\\test_audio_16000.wav")

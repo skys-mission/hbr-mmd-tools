@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2024, https://github.com/skys-mission and SoyMilkWhisky
+# Copyright (c) 2024, https://github.com/skys-mission and Half-Bottled Reverie
 """
 翻译相关
 """
@@ -69,7 +69,7 @@ translation_zh_map = {
     ("*", "f/22 minimum aperture"): "f/22 最小光圈",
     ("*", "Requires a strong light environment"): "需要强光环境",
     ("*", "Slightly Blurred. Suitable for average lighting conditions"): "轻微虚化，适合一般光照条件",
-    ("*", "Whisky Helper"): "Whisky助手",
+    ("*", "HBR MMD Tools"): "HBR MMD工具",
     ("*", "default"): "默认",
     ("*", "Start Frame"): "起始帧",
     ("*", "Delayed Opening"): "延时张嘴",
@@ -107,4 +107,5 @@ translation_zh_map = {
     ("Operator", "Gen Lips"): "口型生成",
     ("Operator", "user doc"): "用户文档",
     ("Operator", "open source"): "开源地址",
+    ("*", "author: Half-Bottled Reverie"): "作者：半瓶入梦",
 }

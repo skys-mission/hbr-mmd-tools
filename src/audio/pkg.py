@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2024, https://github.com/skys-mission and SoyMilkWhisky
+# Copyright (c) 2024, https://github.com/skys-mission and Half-Bottled Reverie
 """
 ...
 """
 import os
 import sys
 import bpy  # pylint: disable=import-error
+from ..core.compat import get_bundled_python_lib_path
 
 
 def unload_pkg():
@@ -13,17 +14,8 @@ def unload_pkg():
     ...
     """
     py_file_dir = os.path.abspath(os.path.dirname(__file__))
-
-    # 获取Blender版本
-    version = bpy.app.version
-    major, minor = version[0], version[1]
-    # 根据版本选择不同的plib路径
-    if major == 3 and minor >= 6 or major == 4 and minor == 0:
-        plib_path = os.path.join(py_file_dir, 'plib310')
-    elif major >= 4 and minor >= 1:
-        plib_path = os.path.join(py_file_dir, 'plib311')
-    else:
-        raise ValueError(f"Unsupported Blender version: {major}.{minor}")
+    _ = bpy.app.version
+    plib_path = get_bundled_python_lib_path(py_file_dir)
 
     if plib_path in sys.path:
         sys.path.remove(plib_path)

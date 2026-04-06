@@ -1,21 +1,21 @@
 schema_version = "1.0.0"
 
-id = "whisky_helper_by_soy_milk_whisky"
+id = "hbr_mmd_tools"
 version = "0.3.2"
-name = "Whisky Helper"
-tagline = "Whisky Helper"
-maintainer = "SoyWhisky <skysmission@outlook.com>"
+name = "HBR MMD Tools"
+tagline = "MMD lip sync and workflow tools"
+maintainer = "Half-Bottled Reverie <skysmission@outlook.com>"
 
 type = "add-on"
 
 # 可选：文档、支持、源文件等的链接
-website = "https://github.com/skys-mission/whisky_helper_for_blender"
+website = "https://github.com/skys-mission/hbr_mmd_tools"
 
 # # 可选：Blender 和服务器定义的标签列表，参见：
 # # https://docs.blender.org/manual/en/dev/advanced/extensions/tags.html
 tags = ["3D View", "Camera", "Animation", "Render"]
 
-blender_version_min = "3.6.0"
+blender_version_min = "4.2.0"
 
 # 可选：支持的最大版本
 # blender_version_max = "5.1.0"
@@ -27,12 +27,12 @@ license = [
 ]
 # 可选：某些许可证要求。
 copyright = [
-    "2024-2025 SoyWhisky",
-    "2025 https://github.com/skys-mission/whisky_helper_for_blender",
+    "2024-2025 Half-Bottled Reverie",
+    "2025 https://github.com/skys-mission/hbr_mmd_tools",
 ]
 
 # # 可选：支持的平台列表。不写默认全部
-platforms = ["windows-x64"]
+platforms = ["windows-x64", "macos-arm64"]
 
 
 # # 可选：捆绑第三方 Python 模块。

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2024, https://github.com/skys-mission and SoyMilkWhisky
+# Copyright (c) 2024, https://github.com/skys-mission and Half-Bottled Reverie
 """
 口型处理代码
 """
@@ -176,23 +176,11 @@ class Lips:  # pylint: disable=too-few-public-methods
         dict: 包含形态及其对应帧数据的字典。
         """
 
-        # 日文到形态键的映射
-        morph_mapping = {
-            'a': 'あ',
-            'i': 'い',
-            'u': 'う',
-            'e': 'え',
-            'o': 'お',
-            'n': 'ん'
-        }
-
         # 初始化结果字典
         result = {}
 
         # 遍历形态数据
         for morph, frames in morph_data.items():
-            # 根据映射获取对应的形态名称
-            morph_name = morph_mapping[morph]
             # 初始化帧数据列表
             frame_data = []
 
@@ -212,7 +200,7 @@ class Lips:  # pylint: disable=too-few-public-methods
                 })
 
             # 将形态及其对应的帧数据添加到结果字典中
-            result[morph_name] = frame_data
+            result[morph] = frame_data
 
         # 返回结果字典
         return result

@@ -1,13 +1,63 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2024, https://github.com/skys-mission and SoyMilkWhisky
+# Copyright (c) 2024, https://github.com/skys-mission and Half-Bottled Reverie
 """
 Blender Scene文件
 """
 import bpy  # pylint: disable=import-error
 
+from ...core.config_manager import get_config_manager
+
 lips_audio_path = bpy.props.StringProperty(
     name="Audio Path",
     description="Path to the Audio file.",
+    default="",
+    maxlen=512,
+    subtype='FILE_PATH',
+)
+
+# 口型配置选择属性
+def get_lips_config_files(_self, _context):
+    """获取口型配置文件列表"""
+    config_manager = get_config_manager()
+    config_files = config_manager.get_config_entries('lip_sync')
+    return [
+        (config['id'], config['display_name'], config['description'])
+        for config in config_files
+    ]
+
+lips_config_selection = bpy.props.EnumProperty(
+    name="Lip Sync Config",
+    description="Select lip sync configuration",
+    items=get_lips_config_files
+)
+
+lips_custom_config_path = bpy.props.StringProperty(
+    name="Custom Config Path",
+    description="Path to custom lip sync configuration file",
+    default="",
+    maxlen=512,
+    subtype='FILE_PATH',
+)
+
+# 眨眼配置选择属性
+def get_blink_config_files(_self, _context):
+    """获取眨眼配置文件列表"""
+    config_manager = get_config_manager()
+    config_files = config_manager.get_config_entries('blink')
+    return [
+        (config['id'], config['display_name'], config['description'])
+        for config in config_files
+    ]
+
+blink_config_selection = bpy.props.EnumProperty(
+    name="Blink Config",
+    description="Select blink configuration",
+    items=get_blink_config_files
+)
+
+blink_custom_config_path = bpy.props.StringProperty(
+    name="Custom Config Path",
+    description="Path to custom blink configuration file",
     default="",
     maxlen=512,
     subtype='FILE_PATH',

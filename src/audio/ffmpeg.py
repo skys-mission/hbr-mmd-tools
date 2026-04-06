@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2024, https://github.com/skys-mission and SoyMilkWhisky
+# Copyright (c) 2024, https://github.com/skys-mission and Half-Bottled Reverie
 """
 ffmpeg
 """
@@ -24,7 +24,7 @@ def convert_to_wav_16000(audio_path):
 
     # 在路径中拼接随机数
     output_path = (Path(audio_path).parent /
-                   f"{base_name}_soywhisky16hz_{random.randint(100, 999)}.wav")
+                   f"{base_name}_hbr16khz_{random.randint(100, 999)}.wav")
 
     # Get the current script directory
     script_dir = os.path.dirname(os.path.abspath(__file__))

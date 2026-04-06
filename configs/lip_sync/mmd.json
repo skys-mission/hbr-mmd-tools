@@ -1,0 +1,40 @@
+{
+  "name": "MMD Lip Sync",
+  "description": "Standard MMD lip sync configuration",
+  "version": "1.0",
+  "author": "Half-Bottled Reverie",
+  "shape_keys": {
+    "a": "あ",
+    "i": "い",
+    "u": "う",
+    "e": "え",
+    "o": "お",
+    "n": "ん"
+  },
+  "adjustment_rules": {
+    "a": {
+      "priority": 1.0,
+      "adjustment_factor": 1.2
+    },
+    "o": {
+      "priority": 1.0,
+      "adjustment_factor": 1.2
+    },
+    "i": {
+      "priority": 0.9,
+      "adjustment_factor": 0.9
+    },
+    "u": {
+      "priority": 0.9,
+      "adjustment_factor": 0.9
+    },
+    "e": {
+      "priority": 0.9,
+      "adjustment_factor": 0.9
+    },
+    "n": {
+      "priority": 0.3,
+      "adjustment_factor": 1.0
+    }
+  }
+}

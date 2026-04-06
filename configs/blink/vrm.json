@@ -1,0 +1,14 @@
+{
+    "name": "VRM Blink Configuration",
+    "description": "VRM模型眨眼配置文件，支持VRM标准眨眼形态键",
+    "version": "1.0.0",
+    "author": "Half Bottled Blender Plugin",
+    "type": "blink",
+    "shape_keys": {
+        "blink": "Blink"
+    },
+    "parameters": {
+        "default_interval_seconds": 4.0,
+        "default_wave_ratio": 0.3
+    }
+}
