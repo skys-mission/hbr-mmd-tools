@@ -73,7 +73,13 @@ def score_visemes(f1, f2):
     return normalize_weights(weights)
 
 
-def apply_temporal_smoothing(samples, anticipation=0.22, attack=0.65, release=0.35, contrast=1.2):
+def apply_temporal_smoothing(
+    samples,
+    anticipation=0.22,
+    attack=0.65,
+    release=0.35,
+    contrast=1.2,
+):  # pylint: disable=too-many-locals
     """Smooth viseme weights over time and add look-ahead coarticulation."""
     if not samples:
         return []
@@ -149,7 +155,7 @@ def cap_total_weight(weights, limit):
     }
 
 
-def build_viseme_keyframes(
+def build_viseme_keyframes(  # pylint: disable=too-many-arguments,too-many-positional-arguments,too-many-locals
     samples,
     start_frame=1,
     fps=24,
@@ -216,7 +222,11 @@ def _derive_smoothing_params(buffer, approach_speed, anticipation_scale):
     anticipation_scale = clamp(float(anticipation_scale), 0.2, 1.5)
 
     anticipation = (0.14 + (normalized_buffer * 0.18)) * anticipation_scale
-    attack = clamp(0.72 - (normalized_buffer * 0.28) + ((normalized_speed - 1.0) * 0.025), 0.35, 0.9)
+    attack = clamp(
+        0.72 - (normalized_buffer * 0.28) + ((normalized_speed - 1.0) * 0.025),
+        0.35,
+        0.9,
+    )
     release = clamp(0.28 + (normalized_buffer * 0.15), 0.2, 0.55)
     contrast = clamp(1.0 + ((normalized_speed - 1.0) * 0.07), 1.0, 1.8)
     return anticipation, attack, release, contrast
@@ -249,7 +259,10 @@ def _simplify_track(track, start_frame):
 
         deviation = _linear_deviation(previous_kept, current, next_point)
         is_turning_point = (
-            (current["value"] - previous_kept["value"]) * (next_point["value"] - current["value"]) <= 0.0
+            (
+                (current["value"] - previous_kept["value"])
+                * (next_point["value"] - current["value"])
+            ) <= 0.0
             and (
                 abs(current["value"] - previous_kept["value"]) >= epsilon
                 or abs(next_point["value"] - current["value"]) >= epsilon

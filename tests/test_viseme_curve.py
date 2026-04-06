@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
+"""Tests for viseme curve helpers."""
 import unittest
 
-from src.audio.viseme_curve import build_viseme_keyframes, compute_openness, score_visemes
+from src.audio.viseme_curve import (  # pylint: disable=import-error
+    build_viseme_keyframes,
+    compute_openness,
+    score_visemes,
+)
 
 
 def _weights(**overrides):
@@ -11,7 +16,10 @@ def _weights(**overrides):
 
 
 class VisemeCurveTests(unittest.TestCase):
+    """Regression tests for viseme curve generation."""
+
     def test_compute_openness_grows_with_energy(self):
+        """Openness should increase with stronger audio energy."""
         quiet = compute_openness(-55.0, 0.01, -50.0, 0.05)
         loud = compute_openness(-18.0, 0.20, -50.0, 0.05)
         self.assertLess(quiet, loud)
@@ -19,12 +27,14 @@ class VisemeCurveTests(unittest.TestCase):
         self.assertLessEqual(loud, 1.0)
 
     def test_score_visemes_prefers_matching_formant_prototype(self):
+        """Formant prototypes should map to the expected dominant viseme."""
         a_weights = score_visemes(850.0, 1450.0)
         i_weights = score_visemes(320.0, 2250.0)
         self.assertEqual(max(a_weights, key=a_weights.get), "a")
         self.assertEqual(max(i_weights, key=i_weights.get), "i")
 
     def test_build_viseme_keyframes_keeps_soft_transition(self):
+        """Keyframes should preserve a smooth transition between visemes."""
         samples = [
             {"time": 0.0, "openness": 0.0, "weights": _weights()},
             {"time": 0.04, "openness": 0.8, "weights": _weights(a=1.0)},
