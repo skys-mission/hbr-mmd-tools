@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2025, https://github.com/skys-mission and SoyWhisky
+# Copyright (c) 2025, https://github.com/skys-mission and Half-Bottled Reverie
 """
 配置文件管理器
 """
@@ -7,7 +7,7 @@
 import json
 import os
 
-import bpy
+import bpy  # pylint: disable=import-error
 
 from ..util.logger import Log
 from .config_schema import ConfigValidationError, validate_config

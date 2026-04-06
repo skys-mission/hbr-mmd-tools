@@ -2,7 +2,7 @@
   "name": "MMD Blink",
   "description": "Standard MMD blink configuration",
   "version": "1.0",
-  "author": "Whisky Helper",
+  "author": "Half-Bottled Reverie",
   "shape_keys": {
     "blink": "まばたき"
   }

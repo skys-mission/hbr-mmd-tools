@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2025, https://github.com/skys-mission and SoyWhisky
+# Copyright (c) 2025, https://github.com/skys-mission and Half-Bottled Reverie
 """
 口型生成服务。
 """
@@ -101,32 +101,15 @@ def set_lips_to_mesh_with_config(mesh, lips, start_frame, config):  # pylint: di
         valid_frames = (item for item in morph_frames if item["frame"] >= start_frame)
 
         for morph_frame in valid_frames:
-            adjusted_value = 0
-            if morph_frame["value"] > 0:
-                sum_values = 0.0
-                count = 0
-                for morph in config_morph_list:
-                    if morph in existing_morphs and morph != target_morph_key:
-                        current_val = get_shape_key_value_at_frame(
-                            mesh,
-                            morph,
-                            morph_frame["frame"],
-                        )
-                        if current_val is not None:
-                            sum_values += current_val
-                            count += 1
-
-                if count > 0:
-                    if count > 1:
-                        adjusted_value = morph_frame["value"] - (
-                            (sum_values / count) * adjustment_factor
-                        )
-                    else:
-                        adjusted_value = morph_frame["value"] - (sum_values / count)
-
-                adjusted_value *= priority
-                adjusted_value = max(adjusted_value, 0.0)
-                adjusted_value = min(adjusted_value, 0.99)
+            adjusted_value = _calculate_adjusted_value(
+                mesh,
+                morph_frame,
+                config_morph_list,
+                existing_morphs,
+                target_morph_key,
+                adjustment_factor,
+                priority,
+            )
 
             set_shape_key_value(
                 obj=mesh,
@@ -139,6 +122,45 @@ def set_lips_to_mesh_with_config(mesh, lips, start_frame, config):  # pylint: di
                 f"Set shape key '{target_morph_key}' "
                 f"with frame {morph_frame['frame']} and value {adjusted_value}"
             )
+
+
+def _calculate_adjusted_value(
+    mesh,
+    morph_frame,
+    config_morph_list,
+    existing_morphs,
+    target_morph_key,
+    adjustment_factor,
+    priority,
+):  # pylint: disable=too-many-arguments,too-many-positional-arguments
+    if morph_frame["value"] <= 0:
+        return 0
+
+    sum_values = 0.0
+    count = 0
+    for morph in config_morph_list:
+        if morph not in existing_morphs or morph == target_morph_key:
+            continue
+        current_val = get_shape_key_value_at_frame(
+            mesh,
+            morph,
+            morph_frame["frame"],
+        )
+        if current_val is None:
+            continue
+        sum_values += current_val
+        count += 1
+
+    adjusted_value = morph_frame["value"]
+    if count > 0:
+        adjusted_value -= (sum_values / count) * adjustment_factor
+        if count == 1:
+            adjusted_value = morph_frame["value"] - (sum_values / count)
+
+    adjusted_value *= priority
+    adjusted_value = max(adjusted_value, 0.0)
+    adjusted_value = min(adjusted_value, 0.99)
+    return adjusted_value
 
 
 def set_shape_key_value(obj, shape_key_name, value, frame, f_type):

@@ -1,6 +1,6 @@
 # pylint: skip-file
 # -*- coding: utf-8 -*-
-# Copyright (c) 2024, https://github.com/skys-mission and SoyMilkWhisky
+# Copyright (c) 2024, https://github.com/skys-mission and Half-Bottled Reverie
 """
 ...
 """
@@ -215,4 +215,4 @@ def process_vowel_sequence(vowel_sequence_with_timestamps: List[dict]) -> List[T
 #     print(item)
 
 
-# rosa("F:\\OBS_Video\\test_whiskyai_xyz_16000.wav",-50,0.01)
+# rosa("F:\\OBS_Video\\test_audio_16000.wav",-50,0.01)

@@ -4,7 +4,7 @@
 该类提供了一系列静态方法，包括获取Blender版本信息、注册和注销类、注册和注销翻译，
 以及在Blender主线程中调用函数。
 
-Copyright (c) 2025, https://github.com/skys-mission and SoyWhisky
+Copyright (c) 2025, https://github.com/skys-mission and Half-Bottled Reverie
 """
 
 import bpy  # pylint: disable=import-error

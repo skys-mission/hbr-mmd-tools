@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2024, https://github.com/skys-mission and SoyMilkWhisky
+# Copyright (c) 2024, https://github.com/skys-mission and Half-Bottled Reverie
 """
 关于面板
 """
 import bpy  # pylint: disable=import-error
+
+from ..data.local import LOCAL_CH_36, LOCAL_CH_40
 
 
 class AboutPanel(bpy.types.Panel):  # pylint: disable=too-few-public-methods
@@ -39,13 +41,25 @@ class AboutPanel(bpy.types.Panel):  # pylint: disable=too-few-public-methods
         row = layout.row()
         row.alignment = 'CENTER'
         props = row.operator("wm.url_open", text="user doc", icon='URL')
-        props.url = "https://github.com/skys-mission/hbr-mmd-tools#readme"
+        props.url = "https://github.com/skys-mission/hbr_mmd_tools#readme"
         row.alignment = 'CENTER'
         props = row.operator("wm.url_open", text="open source", icon='URL')
-        props.url = "https://github.com/skys-mission/hbr-mmd-tools"
+        props.url = "https://github.com/skys-mission/hbr_mmd_tools"
 
         row = layout.row()
-        row.label(text="author: 半瓶入梦")
+        row.label(text="author: Half-Bottled Reverie")
 
-        row = layout.row()
-        row.label(text="QQ群：105619180")
+        if self._is_chinese_interface(context):
+            row = layout.row()
+            row.label(text="QQ群：105619180")
+
+    @staticmethod
+    def _is_chinese_interface(context):
+        language = getattr(context.preferences.view, "language", "")
+        if isinstance(language, str) and (
+            language in {LOCAL_CH_36, LOCAL_CH_40} or language.startswith("zh")
+        ):
+            return True
+
+        locale = getattr(bpy.app.translations, "locale", "")
+        return isinstance(locale, str) and locale.startswith("zh")

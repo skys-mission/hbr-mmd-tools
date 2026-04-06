@@ -1,15 +1,15 @@
 schema_version = "1.0.0"
 
-id = "whisky_helper_by_soy_milk_whisky"
+id = "hbr_mmd_tools"
 version = "0.3.2"
 name = "HBR MMD Tools"
 tagline = "MMD lip sync and workflow tools"
-maintainer = "SoyWhisky <skysmission@outlook.com>"
+maintainer = "Half-Bottled Reverie <skysmission@outlook.com>"
 
 type = "add-on"
 
 # 可选：文档、支持、源文件等的链接
-website = "https://github.com/skys-mission/hbr-mmd-tools"
+website = "https://github.com/skys-mission/hbr_mmd_tools"
 
 # # 可选：Blender 和服务器定义的标签列表，参见：
 # # https://docs.blender.org/manual/en/dev/advanced/extensions/tags.html
@@ -27,8 +27,8 @@ license = [
 ]
 # 可选：某些许可证要求。
 copyright = [
-    "2024-2025 SoyWhisky",
-    "2025 https://github.com/skys-mission/hbr-mmd-tools",
+    "2024-2025 Half-Bottled Reverie",
+    "2025 https://github.com/skys-mission/hbr_mmd_tools",
 ]
 
 # # 可选：支持的平台列表。不写默认全部

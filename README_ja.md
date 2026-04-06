@@ -1,14 +1,14 @@
 # HBR MMD Tools
 
-[![Pylint](https://github.com/skys-mission/hbr-mmd-tools/actions/workflows/pylint.yml/badge.svg?branch=main)](https://github.com/skys-mission/hbr-mmd-tools/actions/workflows/pylint.yml)
-[![CodeQL Advanced](https://github.com/skys-mission/hbr-mmd-tools/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/skys-mission/hbr-mmd-tools/actions/workflows/codeql.yml)
-[![Bandit](https://github.com/skys-mission/hbr-mmd-tools/actions/workflows/bandit.yml/badge.svg)](https://github.com/skys-mission/hbr-mmd-tools/actions/workflows/bandit.yml)
+[![Pylint](https://github.com/skys-mission/hbr_mmd_tools/actions/workflows/pylint.yml/badge.svg?branch=main)](https://github.com/skys-mission/hbr_mmd_tools/actions/workflows/pylint.yml)
+[![CodeQL Advanced](https://github.com/skys-mission/hbr_mmd_tools/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/skys-mission/hbr_mmd_tools/actions/workflows/codeql.yml)
+[![Bandit](https://github.com/skys-mission/hbr_mmd_tools/actions/workflows/bandit.yml/badge.svg)](https://github.com/skys-mission/hbr_mmd_tools/actions/workflows/bandit.yml)
 
 他の言語：[English](README.md), [简体中文](README_zh.md)
 
 MMD ワークフロー向けの Blender アドオンです。主な機能は MMD 口形生成、ランダムまばたき、関連補助ツールです。
 
-このプロジェクトは `HBR MMD Tools` に改名しました。旧名は `whisky_helper_for_blender` です。
+このプロジェクトは `HBR MMD Tools` に改名しました。以前は別のアドオン名で公開していました。
 
 `HBR` は `Half-Bottled Reverie` に由来し、`MMD Tools` は現在の機能と用途をより直接的に表しています。
 
@@ -33,7 +33,7 @@ MMD ワークフロー向けの Blender アドオンです。主な機能は MMD
 
 ## ダウンロード
 
-https://github.com/skys-mission/hbr-mmd-tools/releases
+https://github.com/skys-mission/hbr_mmd_tools/releases
 
 ## 機能
 

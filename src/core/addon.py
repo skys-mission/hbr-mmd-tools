@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2025, https://github.com/skys-mission and SoyWhisky
+# Copyright (c) 2025, https://github.com/skys-mission and Half-Bottled Reverie
 """
 初始化代码
 """
@@ -17,8 +17,20 @@ from ..api.scene.render_preset_scene import (
     resolution_preset, aspect_ratio_preset, orientation_preset)
 from ..api.ui.about import AboutPanel
 from ..api.ui.camera_set_panel import CameraSetPanel
-from ..api.ui.mmd_blink_panel import RandomBlinkOperator, RandomBlinkPanel, ImportBlinkConfigOperator, OpenBlinkConfigFolderOperator
-from ..api.ui.mmd_set_panel import MMDHelperPanel, GenLipsOperator, ImportLipsConfigOperator, OpenLipsConfigFolderOperator
+from ..api.ui.mmd_blink_panel import (
+    RandomBlinkConfigPanel,
+    RandomBlinkOperator,
+    RandomBlinkPanel,
+    ImportBlinkConfigOperator,
+    OpenBlinkConfigFolderOperator,
+)
+from ..api.ui.mmd_set_panel import (
+    MMDHelperPanel,
+    MMDLipConfigPanel,
+    GenLipsOperator,
+    ImportLipsConfigOperator,
+    OpenLipsConfigFolderOperator,
+)
 from ..api.ui.render_preset_panel import RenderPresetPanel
 
 
@@ -45,8 +57,10 @@ class AddonManager:
         RenderPresetPanel,
         CameraSetPanel,
         MMDHelperPanel,
-        AboutPanel,
+        MMDLipConfigPanel,
         RandomBlinkPanel,
+        RandomBlinkConfigPanel,
+        AboutPanel,
     )
 
     @staticmethod

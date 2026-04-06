@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2025, https://github.com/skys-mission and SoyWhisky
+# Copyright (c) 2025, https://github.com/skys-mission and Half-Bottled Reverie
 """
 Blender Addon 入口
 """
@@ -9,14 +9,14 @@ from .src.core.compat import ensure_supported_blender_version
 # 注册插件信息
 bl_info = {
     "name": "HBR MMD Tools",
-    "author": "SoyWhisky, github.com/skys-mission",
+    "author": "Half-Bottled Reverie, github.com/skys-mission",
     "version": (0, 3, 2),
     "blender": (4, 2, 0),
     "location": "View3D > Sidebar > HBR MMD Tools",
     "description": "Blender add-on for MMD lip sync, random blinking, and related workflow tools.",
     "category": "3D View",
-    "doc_url": "https://github.com/skys-mission/hbr-mmd-tools#readme",
-    "tracker_url": "https://github.com/skys-mission/hbr-mmd-tools/issues"
+    "doc_url": "https://github.com/skys-mission/hbr_mmd_tools#readme",
+    "tracker_url": "https://github.com/skys-mission/hbr_mmd_tools/issues"
 }
 
 

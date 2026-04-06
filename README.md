@@ -1,14 +1,14 @@
 # HBR MMD Tools
 
-[![Pylint](https://github.com/skys-mission/hbr-mmd-tools/actions/workflows/pylint.yml/badge.svg?branch=main)](https://github.com/skys-mission/hbr-mmd-tools/actions/workflows/pylint.yml)
-[![CodeQL Advanced](https://github.com/skys-mission/hbr-mmd-tools/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/skys-mission/hbr-mmd-tools/actions/workflows/codeql.yml)
-[![Bandit](https://github.com/skys-mission/hbr-mmd-tools/actions/workflows/bandit.yml/badge.svg)](https://github.com/skys-mission/hbr-mmd-tools/actions/workflows/bandit.yml)
+[![Pylint](https://github.com/skys-mission/hbr_mmd_tools/actions/workflows/pylint.yml/badge.svg?branch=main)](https://github.com/skys-mission/hbr_mmd_tools/actions/workflows/pylint.yml)
+[![CodeQL Advanced](https://github.com/skys-mission/hbr_mmd_tools/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/skys-mission/hbr_mmd_tools/actions/workflows/codeql.yml)
+[![Bandit](https://github.com/skys-mission/hbr_mmd_tools/actions/workflows/bandit.yml/badge.svg)](https://github.com/skys-mission/hbr_mmd_tools/actions/workflows/bandit.yml)
 
 Other languages: [简体中文](README_zh.md), [日本語](README_ja.md)
 
 A Blender add-on for MMD workflows. Main features include MMD lip-sync generation, random blinking, and related utility tools.
 
-This project is renamed to `HBR MMD Tools`. The previous name was `whisky_helper_for_blender`.
+This project is renamed to `HBR MMD Tools`. It was previously published under a different add-on name.
 
 `HBR` comes from `Half-Bottled Reverie`, and `MMD Tools` reflects the add-on's current focus more directly.
 
@@ -33,7 +33,7 @@ This project is renamed to `HBR MMD Tools`. The previous name was `whisky_helper
 
 ## Download
 
-https://github.com/skys-mission/hbr-mmd-tools/releases
+https://github.com/skys-mission/hbr_mmd_tools/releases
 
 ## Features
 

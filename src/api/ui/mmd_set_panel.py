@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2024, https://github.com/skys-mission and SoyMilkWhisky
+# Copyright (c) 2024, https://github.com/skys-mission and Half-Bottled Reverie
 # pylint: disable=R0801
 """
 MMD面板
 """
-
-import bpy  # pylint: disable=import-error
 import os
+import subprocess
 import sys
 
+import bpy  # pylint: disable=import-error
+
+from ...core.config_manager import get_config_manager
 from ...services.lip_sync_service import generate_lip_sync
 from ...util.logger import Log
 
@@ -44,27 +46,6 @@ class MMDHelperPanel(bpy.types.Panel):  # pylint: disable=too-few-public-methods
         layout = self.layout
         scene = context.scene
 
-        # 配置选择区域
-        box = layout.box()
-        box.label(text="Lip Sync Configuration")
-        
-        # 配置选择下拉框
-        row = box.row()
-        row.prop(scene, "lips_config_selection", text="Config")
-        
-        # 自定义配置导入
-        row = box.row()
-        row.prop(scene, "lips_custom_config_path", text="Custom Config")
-        row.operator("mmd.import_lips_config", text="Apply", icon='CHECKMARK')
-        
-        # 打开配置文件夹
-        row = box.row()
-        row.operator("mmd.open_lips_config_folder", text="Open Config Folder", icon='FILE_FOLDER')
-        
-        # 分隔线
-        layout.separator()
-        
-        # 音频和参数设置
         layout.prop(scene, "lips_audio_path")
         layout.prop(scene, "lips_start_frame")
         layout.prop(scene, "db_threshold")
@@ -76,7 +57,37 @@ class MMDHelperPanel(bpy.types.Panel):  # pylint: disable=too-few-public-methods
         layout.operator("mmd.gen_lips")
 
 
-class ImportLipsConfigOperator(bpy.types.Operator):
+class MMDLipConfigPanel(bpy.types.Panel):  # pylint: disable=too-few-public-methods
+    """
+    口型配置面板
+    """
+    bl_label = "Config"
+    bl_idname = "OBJECT_PT_MMD_Lip_Config"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_category = 'HBR MMD Tools'
+    bl_parent_id = "OBJECT_PT_MMD_Helper"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        """
+        ...
+        """
+        layout = self.layout
+        scene = context.scene
+
+        row = layout.row()
+        row.prop(scene, "lips_config_selection", text="Config")
+
+        row = layout.row()
+        row.prop(scene, "lips_custom_config_path", text="Custom Config")
+        row.operator("mmd.import_lips_config", text="Apply", icon='CHECKMARK')
+
+        row = layout.row()
+        row.operator("mmd.open_lips_config_folder", text="Open Config Folder", icon='FILE_FOLDER')
+
+
+class ImportLipsConfigOperator(bpy.types.Operator):  # pylint: disable=too-few-public-methods
     """导入口型配置操作器"""
     bl_idname = "mmd.import_lips_config"
     bl_label = "Import Lip Sync Config"
@@ -85,18 +96,14 @@ class ImportLipsConfigOperator(bpy.types.Operator):
     def execute(self, context):
         """执行导入配置"""
         scene = context.scene
-        
+
         if not scene.lips_custom_config_path:
             self.report({'ERROR'}, "Please select a custom config file")
             return {'CANCELLED'}
-        
-        from ...core.config_manager import get_config_manager
+
         config_manager = get_config_manager()
-        
-        # 从文件路径中提取配置名称
-        import os
         config_name = os.path.splitext(os.path.basename(scene.lips_custom_config_path))[0]
-        
+
         imported_entry = config_manager.import_config(
             'lip_sync',
             scene.lips_custom_config_path,
@@ -112,39 +119,45 @@ class ImportLipsConfigOperator(bpy.types.Operator):
         else:
             self.report({'ERROR'}, "Failed to import config")
             return {'CANCELLED'}
-        
+
         return {'FINISHED'}
 
 
-class OpenLipsConfigFolderOperator(bpy.types.Operator):
+class OpenLipsConfigFolderOperator(bpy.types.Operator):  # pylint: disable=too-few-public-methods
     """打开口型配置文件夹操作器"""
     bl_idname = "mmd.open_lips_config_folder"
     bl_label = "Open Lip Sync Config Folder"
     bl_description = "Open the lip sync configuration folder"
 
-    def execute(self, context):
+    def execute(self, _context):
         """执行打开文件夹"""
-        from ...core.config_manager import get_config_manager
         config_manager = get_config_manager()
-        
+
         lips_config_dir = config_manager.get_user_config_dir('lip_sync')
-        
+
         # 确保目录存在
         os.makedirs(lips_config_dir, exist_ok=True)
-        
+
         # 打开文件夹（跨平台兼容）
         try:
             if os.name == 'nt':  # Windows
-                os.startfile(lips_config_dir)
+                startfile = getattr(os, "startfile", None)
+                if not callable(startfile):
+                    raise OSError("os.startfile is unavailable on this platform")
+                startfile(lips_config_dir)  # pylint: disable=not-callable
             elif os.name == 'posix':  # macOS/Linux
-                import subprocess
-                subprocess.run(['open', lips_config_dir] if sys.platform == 'darwin' else ['xdg-open', lips_config_dir])
-            
+                command = (
+                    ['open', lips_config_dir]
+                    if sys.platform == 'darwin'
+                    else ['xdg-open', lips_config_dir]
+                )
+                subprocess.run(command, check=True)
+
             self.report({'INFO'}, f"Opened lip sync config folder: {lips_config_dir}")
-        except Exception as e:
-            self.report({'ERROR'}, f"Failed to open folder: {str(e)}")
+        except (OSError, subprocess.SubprocessError) as exc:
+            self.report({'ERROR'}, f"Failed to open folder: {str(exc)}")
             return {'CANCELLED'}
-        
+
         return {'FINISHED'}
 
 

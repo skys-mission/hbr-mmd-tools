@@ -1,14 +1,14 @@
 # HBR MMD Tools
 
-[![Pylint](https://github.com/skys-mission/hbr-mmd-tools/actions/workflows/pylint.yml/badge.svg?branch=main)](https://github.com/skys-mission/hbr-mmd-tools/actions/workflows/pylint.yml)
-[![CodeQL Advanced](https://github.com/skys-mission/hbr-mmd-tools/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/skys-mission/hbr-mmd-tools/actions/workflows/codeql.yml)
-[![Bandit](https://github.com/skys-mission/hbr-mmd-tools/actions/workflows/bandit.yml/badge.svg)](https://github.com/skys-mission/hbr-mmd-tools/actions/workflows/bandit.yml)
+[![Pylint](https://github.com/skys-mission/hbr_mmd_tools/actions/workflows/pylint.yml/badge.svg?branch=main)](https://github.com/skys-mission/hbr_mmd_tools/actions/workflows/pylint.yml)
+[![CodeQL Advanced](https://github.com/skys-mission/hbr_mmd_tools/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/skys-mission/hbr_mmd_tools/actions/workflows/codeql.yml)
+[![Bandit](https://github.com/skys-mission/hbr_mmd_tools/actions/workflows/bandit.yml/badge.svg)](https://github.com/skys-mission/hbr_mmd_tools/actions/workflows/bandit.yml)
 
 其它语言：[English](README.md), [日本語](README_ja.md)
 
 一个面向 MMD 工作流的 Blender 插件，主要提供 MMD 口型生成、随机眨眼及相关辅助功能。
 
-本项目现更名为 `HBR MMD Tools`，原名为 `whisky_helper_for_blender`。
+本项目现更名为 `HBR MMD Tools`，此前以另一个插件名发布。
 
 `HBR` 来自 `Half-Bottled Reverie`，`MMD Tools` 也更直接地说明了插件当前的功能定位。
 
@@ -33,7 +33,7 @@
 
 ## Download
 
-https://github.com/skys-mission/hbr-mmd-tools/releases
+https://github.com/skys-mission/hbr_mmd_tools/releases
 
 中国大陆用户：
 
