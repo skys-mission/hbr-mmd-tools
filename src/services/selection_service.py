@@ -11,11 +11,11 @@ def find_selected_meshes_with_shape_keys(context, shape_key_names):
     """在选中对象树范围内查找包含指定形态键的网格对象。"""
     selected_objects = context.selected_objects
     if not selected_objects:
-        Log.raise_error("Please select an object first.", Exception)
+        Log.raise_error("Please select an object first.", ValueError)
 
     target_shape_keys = [name for name in shape_key_names if name]
     if not target_shape_keys:
-        Log.raise_error("No target shape keys were provided.", Exception)
+        Log.raise_error("No target shape keys were provided.", ValueError)
 
     found_objects = []
     seen = set()
@@ -26,7 +26,7 @@ def find_selected_meshes_with_shape_keys(context, shape_key_names):
         joined_shape_keys = ", ".join(target_shape_keys)
         Log.raise_error(
             f"No object containing configured shape keys was found: {joined_shape_keys}",
-            Exception,
+            ValueError,
         )
 
     return found_objects

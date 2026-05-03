@@ -21,19 +21,20 @@ class Log:
         """
         if Log._logger is None:
             # 配置日志记录器
-            Log._logger = logging.getLogger('plugin_dev_helper')
+            Log._logger = logging.getLogger('hbr_mmd_tools')
             Log._logger.setLevel(logging.INFO)
+            Log._logger.propagate = False
 
-            # 创建一个控制台处理器
-            console_handler = logging.StreamHandler()
-            console_handler.setLevel(logging.INFO)
+            if not Log._logger.handlers:
+                console_handler = logging.StreamHandler()
+                console_handler.setLevel(logging.INFO)
 
-            # 创建一个格式化器
-            formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-            console_handler.setFormatter(formatter)
+                formatter = logging.Formatter(
+                    '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+                )
+                console_handler.setFormatter(formatter)
 
-            # 将处理器添加到日志记录器
-            Log._logger.addHandler(console_handler)
+                Log._logger.addHandler(console_handler)
 
         return Log._logger
 
@@ -41,16 +42,13 @@ class Log:
     def _get_caller_info():
         """
         获取调用日志方法的调用者信息。
-        通过解析调用栈，找到调用日志方法的代码位置。
+
+        栈布局：当前 _get_caller_info -> info/warning/error/raise_error -> 真实调用者。
         """
         stack = traceback.extract_stack()
-        # 找到调用日志方法的堆栈帧
-        for i, frame in enumerate(reversed(stack)):
-            if frame.name in ['info', 'warning', 'error']:
-                # 返回倒数第二层堆栈的文件名和行数
-                if i + 1 < len(stack):
-                    caller_frame = stack[-i - 2]
-                    return f"{caller_frame.filename}:{caller_frame.lineno}"
+        if len(stack) >= 3:
+            caller_frame = stack[-3]
+            return f"{caller_frame.filename}:{caller_frame.lineno}"
         return None
 
     @staticmethod

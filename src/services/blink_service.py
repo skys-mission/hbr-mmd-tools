@@ -70,7 +70,10 @@ def generate_blink_frames(  # pylint: disable=too-many-arguments,too-many-positi
     frames.setdefault(blink_shape_key, [])
 
     while current_time < end_time:
-        actual_interval = interval_seconds * random.uniform(1 - wave_ratio, 1 + wave_ratio)
+        ratio = random.uniform(1 - wave_ratio, 1 + wave_ratio)
+        # 防止 wave_ratio 接近 1 时 ratio 触底导致零间隔死循环
+        ratio = max(0.1, ratio)
+        actual_interval = interval_seconds * ratio
         blink_time = current_time + actual_interval
         blink_frame = int(blink_time * fps)
         if blink_frame > end_frame:

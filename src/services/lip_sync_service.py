@@ -150,6 +150,7 @@ def _apply_adjustment_rule(value, rule):
         base_value = base_value ** (1.0 / adjustment_factor)
 
     adjusted_value = base_value * priority
+    # 强制保留余量，避免目标 morph 被精确锁定到 1.0 时与其他形态键叠加产生穿模
     return min(max(adjusted_value, 0.0), 0.99)
 
 

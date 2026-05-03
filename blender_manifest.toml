@@ -1,7 +1,7 @@
 schema_version = "1.0.0"
 
 id = "hbr_mmd_tools"
-version = "0.3.2"
+version = "0.5.0"
 name = "HBR MMD Tools"
 tagline = "MMD lip sync and workflow tools"
 maintainer = "Half-Bottled Reverie <skysmission@outlook.com>"

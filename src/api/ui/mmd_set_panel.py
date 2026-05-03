@@ -4,15 +4,11 @@
 """
 MMD面板
 """
-import os
-import subprocess
-import sys
-
 import bpy  # pylint: disable=import-error
 
-from ...core.config_manager import get_config_manager
 from ...services.lip_sync_service import generate_lip_sync
 from ...util.logger import Log
+from .config_ops import import_user_config, open_user_config_folder
 
 
 # 定义一个Blender的面板类，用于在UI中显示渲染预设选项
@@ -118,32 +114,13 @@ class ImportLipsConfigOperator(bpy.types.Operator):  # pylint: disable=too-few-p
 
     def execute(self, context):
         """执行导入配置"""
-        scene = context.scene
-
-        if not scene.lips_custom_config_path:
-            self.report({'ERROR'}, "Please select a custom config file")
-            return {'CANCELLED'}
-
-        config_manager = get_config_manager()
-        config_name = os.path.splitext(os.path.basename(scene.lips_custom_config_path))[0]
-
-        imported_entry = config_manager.import_config(
-            'lip_sync',
-            scene.lips_custom_config_path,
-            config_name,
+        return import_user_config(
+            self,
+            context,
+            config_type='lip_sync',
+            source_path_attr='lips_custom_config_path',
+            selection_attr='lips_config_selection',
         )
-        if imported_entry:
-            self.report({'INFO'}, f"Successfully imported config: {config_name}")
-            scene.lips_config_selection = imported_entry['id']
-            # 清空自定义配置路径
-            scene.lips_custom_config_path = ""
-            # 标记需要刷新UI
-            context.area.tag_redraw()
-        else:
-            self.report({'ERROR'}, "Failed to import config")
-            return {'CANCELLED'}
-
-        return {'FINISHED'}
 
 
 class OpenLipsConfigFolderOperator(bpy.types.Operator):  # pylint: disable=too-few-public-methods
@@ -154,34 +131,11 @@ class OpenLipsConfigFolderOperator(bpy.types.Operator):  # pylint: disable=too-f
 
     def execute(self, _context):
         """执行打开文件夹"""
-        config_manager = get_config_manager()
-
-        lips_config_dir = config_manager.get_user_config_dir('lip_sync')
-
-        # 确保目录存在
-        os.makedirs(lips_config_dir, exist_ok=True)
-
-        # 打开文件夹（跨平台兼容）
-        try:
-            if os.name == 'nt':  # Windows
-                startfile = getattr(os, "startfile", None)
-                if not callable(startfile):
-                    raise OSError("os.startfile is unavailable on this platform")
-                startfile(lips_config_dir)  # pylint: disable=not-callable
-            elif os.name == 'posix':  # macOS/Linux
-                command = (
-                    ['open', lips_config_dir]
-                    if sys.platform == 'darwin'
-                    else ['xdg-open', lips_config_dir]
-                )
-                subprocess.run(command, check=True)
-
-            self.report({'INFO'}, f"Opened lip sync config folder: {lips_config_dir}")
-        except (OSError, subprocess.SubprocessError) as exc:
-            self.report({'ERROR'}, f"Failed to open folder: {str(exc)}")
-            return {'CANCELLED'}
-
-        return {'FINISHED'}
+        return open_user_config_folder(
+            self,
+            config_type='lip_sync',
+            success_message_prefix="Opened lip sync config folder",
+        )
 
 
 class GenLipsOperator(bpy.types.Operator):  # pylint: disable=too-few-public-methods

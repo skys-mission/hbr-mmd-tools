@@ -66,6 +66,30 @@ class AddonManager:
         AboutPanel,
     )
 
+    _scene_property_names = (
+        "resolution_preset",
+        "aspect_ratio_preset",
+        "orientation_preset",
+        "camera_settings",
+        "lips_audio_path",
+        "lips_config_selection",
+        "lips_custom_config_path",
+        "lips_start_frame",
+        "lips_generation_preset",
+        "lips_use_custom_tuning",
+        "buffer_frame",
+        "approach_speed",
+        "db_threshold",
+        "rms_threshold",
+        "max_morph_value",
+        "blink_config_selection",
+        "blink_custom_config_path",
+        "blink_start_frame",
+        "blink_end_frame",
+        "blinking_frequency",
+        "blinking_wave_ratio",
+    )
+
     @staticmethod
     def init_addon():
         """
@@ -136,56 +160,15 @@ class AddonManager:
         scene.blinking_wave_ratio = blinking_wave_ratio
 
     @staticmethod
-    def unregister_scene():  # pylint: disable=too-many-branches
+    def unregister_scene():
         """
         注销场景属性。
         这些属性包括渲染预设、摄像机设置等。
         """
         scene = Bridge.Types.get_scene()
-
-        # 删除Blender Scene
-        if hasattr(scene, 'resolution_preset'):
-            del scene.resolution_preset
-        if hasattr(scene, 'aspect_ratio_preset'):
-            del scene.aspect_ratio_preset
-        if hasattr(scene, 'orientation_preset'):
-            del scene.orientation_preset
-        if hasattr(scene, 'camera_settings'):
-            del scene.camera_settings
-        if hasattr(scene, 'lips_audio_path'):
-            del scene.lips_audio_path
-        if hasattr(scene, 'lips_config_selection'):
-            del scene.lips_config_selection
-        if hasattr(scene, 'lips_custom_config_path'):
-            del scene.lips_custom_config_path
-        if hasattr(scene, 'lips_start_frame'):
-            del scene.lips_start_frame
-        if hasattr(scene, 'lips_generation_preset'):
-            del scene.lips_generation_preset
-        if hasattr(scene, 'lips_use_custom_tuning'):
-            del scene.lips_use_custom_tuning
-        if hasattr(scene, 'buffer_frame'):
-            del scene.buffer_frame
-        if hasattr(scene, 'approach_speed'):
-            del scene.approach_speed
-        if hasattr(scene, 'db_threshold'):
-            del scene.db_threshold
-        if hasattr(scene, 'rms_threshold'):
-            del scene.rms_threshold
-        if hasattr(scene, 'max_morph_value'):
-            del scene.max_morph_value
-        if hasattr(scene, 'blink_config_selection'):
-            del scene.blink_config_selection
-        if hasattr(scene, 'blink_custom_config_path'):
-            del scene.blink_custom_config_path
-        if hasattr(scene, 'blink_start_frame'):
-            del scene.blink_start_frame
-        if hasattr(scene, 'blink_end_frame'):
-            del scene.blink_end_frame
-        if hasattr(scene, 'blinking_frequency'):
-            del scene.blinking_frequency
-        if hasattr(scene, 'blinking_wave_ratio'):
-            del scene.blinking_wave_ratio
+        for prop_name in AddonManager._scene_property_names:
+            if hasattr(scene, prop_name):
+                delattr(scene, prop_name)
 
     @staticmethod
     def register_classes():
