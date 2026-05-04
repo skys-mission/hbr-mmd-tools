@@ -114,23 +114,23 @@ def head_bone_world_loc(arm):
 def calc_character_metrics(_root_obj, arm, mesh):
     """
     计算角色的参考高度和焦点位置。
-    返回 (H, fx, fy, fz, cz, es)。
+    返回 (height, fx, fy, fz, cz, es)。
     """
     hl = head_bone_world_loc(arm)
     if hl:
-        H = hl.z * 1.08
-        fx, fy, fz = hl.x, hl.y, hl.z + H * 0.04
+        height = hl.z * 1.08
+        fx, fy, fz = hl.x, hl.y, hl.z + height * 0.04
     else:
         coords = [mesh.matrix_world @ Vector(c) for c in mesh.bound_box]
         zs = [c.z for c in coords]
-        H = max(zs) - min(zs)
+        height = max(zs) - min(zs)
         fx = (max(c.x for c in coords) + min(c.x for c in coords)) / 2
         fy = (max(c.y for c in coords) + min(c.y for c in coords)) / 2
-        fz = min(zs) + H * 0.92
+        fz = min(zs) + height * 0.92
 
-    es = (H / 1.7) ** 2
-    cz = fz - H * 0.92
-    return H, fx, fy, fz, cz, es
+    es = (height / 1.7) ** 2
+    cz = fz - height * 0.92
+    return height, fx, fy, fz, cz, es
 
 
 # ------------------------------------------------------------------
@@ -164,56 +164,74 @@ def classify_material(mat_name):
 # 色调分析
 # ------------------------------------------------------------------
 
-def analyze_model_tone(meshes):
-    """
-    分析模型整体色调和明暗。
-    返回 (tone, brightness)：
-        tone: 'cool' / 'warm' / 'neutral'
-        brightness: 'light' / 'medium' / 'dark'
-    """
+def _classify_name_tone(mat_name):
+    """根据材质名称关键词判断冷暖倾向。返回 1(cool), -1(warm), 0(neutral)。"""
+    name_lower = mat_name.lower()
+    has_cool = any(kw.lower() in name_lower for kw in _COOL_KEYWORDS)
+    has_warm = any(kw.lower() in name_lower for kw in _WARM_KEYWORDS)
+    if has_cool and not has_warm:
+        return 1
+    if has_warm and not has_cool:
+        return -1
+    return 0
+
+
+def _extract_base_color_rgb(mat):
+    """从材质 Principled BSDF 提取 Base Color RGB，无效时返回 None。"""
+    if not mat.use_nodes:
+        return None
+    for n in mat.node_tree.nodes:
+        if n.bl_idname == 'ShaderNodeBsdfPrincipled':
+            col = n.inputs.get('Base Color')
+            if col is None:
+                return None
+            rgb = col.default_value[:3]
+            s = sum(rgb)
+            if 0.1 <= s <= 2.9:
+                return rgb
+            return None
+    return None
+
+
+def iter_mesh_materials(meshes):
+    """遍历所有 mesh 的有效材质（跳过空槽位）。"""
+    for mesh in meshes:
+        for slot in mesh.material_slots:
+            mat = slot.material
+            if not mat:
+                continue
+            yield mat
+
+
+def _collect_tone_data(meshes):
+    """遍历 mesh 材质，返回 (total_rgb, color_count, name_cool, name_warm, name_count)。"""
     total_rgb = [0.0, 0.0, 0.0]
     color_count = 0
     name_cool = 0
     name_warm = 0
     name_count = 0
 
-    for mesh in meshes:
-        for slot in mesh.material_slots:
-            mat = slot.material
-            if not mat:
-                continue
+    for mat in iter_mesh_materials(meshes):
+        name_tone = _classify_name_tone(mat.name)
+        if name_tone == 1:
+            name_cool += 1
+            name_count += 1
+        elif name_tone == -1:
+            name_warm += 1
+            name_count += 1
 
-            name_lower = mat.name.lower()
-            has_cool = any(kw.lower() in name_lower for kw in _COOL_KEYWORDS)
-            has_warm = any(kw.lower() in name_lower for kw in _WARM_KEYWORDS)
-            if has_cool and not has_warm:
-                name_cool += 1
-                name_count += 1
-            elif has_warm and not has_cool:
-                name_warm += 1
-                name_count += 1
-
-            if not mat.use_nodes:
-                continue
-            p = None
-            for n in mat.node_tree.nodes:
-                if n.bl_idname == 'ShaderNodeBsdfPrincipled':
-                    p = n
-                    break
-            if not p:
-                continue
-            col = p.inputs.get('Base Color')
-            if col is None:
-                continue
-            rgb = col.default_value[:3]
-            s = sum(rgb)
-            if s < 0.1 or s > 2.9:
-                continue
+        rgb = _extract_base_color_rgb(mat)
+        if rgb is not None:
             total_rgb[0] += rgb[0]
             total_rgb[1] += rgb[1]
             total_rgb[2] += rgb[2]
             color_count += 1
 
+    return total_rgb, color_count, name_cool, name_warm, name_count
+
+
+def _compute_tone(total_rgb, color_count, name_cool, name_warm, name_count):
+    """基于颜色和名称数据计算 tone。"""
     color_weight = min(1.0, color_count / 5.0)
     name_weight = 1.0 - color_weight if name_count > 0 else 0.0
 
@@ -232,12 +250,14 @@ def analyze_model_tone(meshes):
     final_score = color_score * color_weight + name_score * name_weight
 
     if final_score > 0.25:
-        tone = 'cool'
-    elif final_score < -0.25:
-        tone = 'warm'
-    else:
-        tone = 'neutral'
+        return 'cool'
+    if final_score < -0.25:
+        return 'warm'
+    return 'neutral'
 
+
+def _compute_brightness(total_rgb, color_count):
+    """基于颜色数据计算 brightness。"""
     if color_count > 0:
         avg = [c / color_count for c in total_rgb]
         v = max(avg)
@@ -245,12 +265,22 @@ def analyze_model_tone(meshes):
         v = 0.45
 
     if v > 0.55:
-        brightness = 'light'
-    elif v < 0.35:
-        brightness = 'dark'
-    else:
-        brightness = 'medium'
+        return 'light'
+    if v < 0.35:
+        return 'dark'
+    return 'medium'
 
+
+def analyze_model_tone(meshes):
+    """
+    分析模型整体色调和明暗。
+    返回 (tone, brightness)：
+        tone: 'cool' / 'warm' / 'neutral'
+        brightness: 'light' / 'medium' / 'dark'
+    """
+    total_rgb, color_count, name_cool, name_warm, name_count = _collect_tone_data(meshes)
+    tone = _compute_tone(total_rgb, color_count, name_cool, name_warm, name_count)
+    brightness = _compute_brightness(total_rgb, color_count)
     return tone, brightness
 
 

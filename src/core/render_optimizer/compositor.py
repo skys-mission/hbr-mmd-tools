@@ -15,6 +15,24 @@ from .presets import (
 )
 
 
+def _build_vignette(nt, aggressive):
+    """Create vignette mask and return the mask_ramp node."""
+    mask = nt.nodes.new('CompositorNodeEllipseMask')
+    mask.location = (-600, -300)
+    mask.inputs['Size'].default_value = (0.58, 0.58)
+    mask.inputs['Value'].default_value = 0.30
+
+    vignette_val = 0.15 if aggressive else VIGNETTE_EDGE
+    mask_ramp = nt.nodes.new('CompositorNodeValToRGB')
+    mask_ramp.location = (-400, -300)
+    mask_ramp.color_ramp.elements[0].position = 0.0
+    mask_ramp.color_ramp.elements[0].color = (vignette_val, vignette_val, vignette_val, 1.0)
+    mask_ramp.color_ramp.elements[1].position = 1.0
+    mask_ramp.color_ramp.elements[1].color = (1.0, 1.0, 1.0, 1.0)
+    nt.links.new(mask.outputs['Mask'], mask_ramp.inputs['Fac'])
+    return mask_ramp
+
+
 def setup_compositor(aggressive=False, enabled=True):
     """
     设置 Compositor 后期节点树。
@@ -65,20 +83,8 @@ def setup_compositor(aggressive=False, enabled=True):
         sharp.location = (200, 0)
         sharp.filter_type = 'SHARPEN'
 
-    # 暗角 mask
-    mask = nt.nodes.new('CompositorNodeEllipseMask')
-    mask.location = (-600, -300)
-    mask.inputs['Size'].default_value = (0.58, 0.58)
-    mask.inputs['Value'].default_value = 0.30
-
-    vignette_val = 0.15 if aggressive else VIGNETTE_EDGE
-    mask_ramp = nt.nodes.new('CompositorNodeValToRGB')
-    mask_ramp.location = (-400, -300)
-    mask_ramp.color_ramp.elements[0].position = 0.0
-    mask_ramp.color_ramp.elements[0].color = (vignette_val, vignette_val, vignette_val, 1.0)
-    mask_ramp.color_ramp.elements[1].position = 1.0
-    mask_ramp.color_ramp.elements[1].color = (1.0, 1.0, 1.0, 1.0)
-    nt.links.new(mask.outputs['Mask'], mask_ramp.inputs['Fac'])
+    # 暗角
+    mask_ramp = _build_vignette(nt, aggressive)
 
     # 混合暗角
     mix_v = nt.nodes.new('CompositorNodeMixRGB')

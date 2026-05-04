@@ -5,7 +5,7 @@ MMD Render Optimizer — 材质增强。
 """
 
 from .presets import MATERIAL_PRESETS
-from .utils import classify_material
+from .utils import classify_material, iter_mesh_materials
 
 
 def _get_principled(mat):
@@ -133,40 +133,36 @@ def enhance_materials(meshes, aggressive=False):
     """
     stats = {'total': 0, 'classified': 0, 'fallback': 0}
 
-    for mesh in meshes:
-        for slot in mesh.material_slots:
-            mat = slot.material
-            if not mat:
-                continue
-            stats['total'] += 1
-            cat, _ = classify_material(mat.name)
-            p = _get_principled(mat)
-            if not p:
-                continue
+    for mat in iter_mesh_materials(meshes):
+        stats['total'] += 1
+        cat, _ = classify_material(mat.name)
+        p = _get_principled(mat)
+        if not p:
+            continue
 
-            preset = MATERIAL_PRESETS.get(cat, MATERIAL_PRESETS['fallback'])
-            if aggressive:
-                preset = make_aggressive_preset(preset, cat)
+        preset = MATERIAL_PRESETS.get(cat, MATERIAL_PRESETS['fallback'])
+        if aggressive:
+            preset = make_aggressive_preset(preset, cat)
 
-            for k, v in preset.items():
-                _safe_set_input(p, k, v)
+        for k, v in preset.items():
+            _safe_set_input(p, k, v)
 
-            # 自动金属度检测 fallback
-            if cat in ('fallback', 'accessory', 'cloth', 'shoes', 'bag'):
-                name_lower = mat.name.lower()
-                metal_hints = {
-                    '金', '银', '銀', '铁', '鉄', '钢', '鋼', '铜', '銅',
-                    '链', '鎖', '锁', '扣', '醣', '钉', '釘', '铆',
-                    'metal', 'gold', 'silver', 'iron', 'steel', 'copper',
-                    'chain', 'buckle', 'rivet', 'gear', 'mech',
-                }
-                if any(h in name_lower for h in metal_hints):
-                    _safe_set_input(p, 'Metallic', 0.95 if aggressive else 0.85)
-                    _safe_set_input(p, 'Roughness', 0.18 if aggressive else 0.35)
+        # 自动金属度检测 fallback
+        if cat in ('fallback', 'accessory', 'cloth', 'shoes', 'bag'):
+            name_lower = mat.name.lower()
+            metal_hints = {
+                '金', '银', '銀', '铁', '鉄', '钢', '鋼', '铜', '銅',
+                '链', '鎖', '锁', '扣', '醣', '钉', '釘', '铆',
+                'metal', 'gold', 'silver', 'iron', 'steel', 'copper',
+                'chain', 'buckle', 'rivet', 'gear', 'mech',
+            }
+            if any(h in name_lower for h in metal_hints):
+                _safe_set_input(p, 'Metallic', 0.95 if aggressive else 0.85)
+                _safe_set_input(p, 'Roughness', 0.18 if aggressive else 0.35)
 
-            if cat == 'fallback':
-                stats['fallback'] += 1
-            else:
-                stats['classified'] += 1
+        if cat == 'fallback':
+            stats['fallback'] += 1
+        else:
+            stats['classified'] += 1
 
     return stats

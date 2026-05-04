@@ -31,17 +31,17 @@ def setup_outline(mesh, strategy='freestyle_auto'):
     scene = bpy.context.scene
 
     if strategy == 'none' or not mesh:
-        _disable_freestyle(scene)
+        disable_freestyle(scene)
         return {'enabled': False, 'strategy': 'none'}
 
     if strategy in ('freestyle_silhouette', 'freestyle_auto'):
         return _setup_freestyle(scene, mesh, strategy)
 
-    _disable_freestyle(scene)
+    disable_freestyle(scene)
     return {'enabled': False, 'strategy': 'none'}
 
 
-def _disable_freestyle(scene):
+def disable_freestyle(scene):
     """关闭 Freestyle。"""
     scene.render.use_freestyle = False
     vl = scene.view_layers[0]

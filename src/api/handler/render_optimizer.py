@@ -12,7 +12,7 @@ from ...services.render_optimizer_service import (
 from ...util.logger import Log
 
 
-class RenderOptimizerApplyOperator(Operator):
+class RenderOptimizerApplyOperator(Operator):  # pylint: disable=too-few-public-methods
     """Apply MMD render optimization"""
     bl_idname = "hbr_mmd.render_optimizer_apply"
     bl_label = "Apply Optimization"
@@ -21,9 +21,11 @@ class RenderOptimizerApplyOperator(Operator):
 
     @classmethod
     def poll(cls, context):
+        """Require at least one selected object."""
         return len(context.selected_objects) > 0
 
     def execute(self, context):
+        """Apply render optimization and report results."""
         context.window_manager.progress_begin(0, 100)
         context.window.cursor_modal_set('WAIT')
         context.window_manager.progress_update(50)
@@ -53,7 +55,7 @@ class RenderOptimizerApplyOperator(Operator):
         return {'FINISHED'}
 
 
-class RenderOptimizerResetOperator(Operator):
+class RenderOptimizerResetOperator(Operator):  # pylint: disable=too-few-public-methods
     """Reset render optimizer changes"""
     bl_idname = "hbr_mmd.render_optimizer_reset"
     bl_label = "Reset"
@@ -61,6 +63,7 @@ class RenderOptimizerResetOperator(Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, _context):
+        """Reset all auto-created render objects."""
         try:
             reset_render_optimizer()
             self.report({'INFO'}, "Scene reset completed")

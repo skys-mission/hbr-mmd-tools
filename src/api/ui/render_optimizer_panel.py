@@ -16,6 +16,7 @@ class RenderOptimizerPanel(bpy.types.Panel):  # pylint: disable=too-few-public-m
     bl_order = 4
 
     def draw(self, context):
+        """Draw the main render optimizer panel."""
         layout = self.layout
         scene = context.scene
 
@@ -52,6 +53,7 @@ class RenderOptimizerAdvancedPanel(bpy.types.Panel):  # pylint: disable=too-few-
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
+        """Draw the advanced render optimizer panel."""
         layout = self.layout
         scene = context.scene
 
