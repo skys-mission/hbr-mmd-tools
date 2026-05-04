@@ -111,7 +111,7 @@ def head_bone_world_loc(arm):
     return None
 
 
-def calc_character_metrics(root_obj, arm, mesh):
+def calc_character_metrics(_root_obj, arm, mesh):
     """
     计算角色的参考高度和焦点位置。
     返回 (H, fx, fy, fz, cz, es)。
@@ -124,8 +124,8 @@ def calc_character_metrics(root_obj, arm, mesh):
         coords = [mesh.matrix_world @ Vector(c) for c in mesh.bound_box]
         zs = [c.z for c in coords]
         H = max(zs) - min(zs)
-        fx = (max([c.x for c in coords]) + min([c.x for c in coords])) / 2
-        fy = (max([c.y for c in coords]) + min([c.y for c in coords])) / 2
+        fx = (max(c.x for c in coords) + min(c.x for c in coords)) / 2
+        fy = (max(c.y for c in coords) + min(c.y for c in coords)) / 2
         fz = min(zs) + H * 0.92
 
     es = (H / 1.7) ** 2
