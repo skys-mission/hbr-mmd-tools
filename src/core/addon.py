@@ -5,6 +5,10 @@
 """
 from ..api.bridge import Bridge
 from ..api.handler.camera import CameraApplySettingsOperator
+from ..api.handler.render_optimizer import (
+    RenderOptimizerApplyOperator,
+    RenderOptimizerResetOperator,
+)
 from ..api.scene.camera_set_scene import CameraSettingsProperties
 from ..api.scene.mmd_set import (lips_audio_path, lips_start_frame, lips_generation_preset,
                                  lips_use_custom_tuning, buffer_frame,
@@ -16,6 +20,13 @@ from ..api.scene.mmd_set import (lips_audio_path, lips_start_frame, lips_generat
                                  blink_config_selection, blink_custom_config_path)
 from ..api.scene.render_preset_scene import (
     resolution_preset, aspect_ratio_preset, orientation_preset)
+from ..api.scene.render_optimizer_scene import (
+    render_opt_preset,
+    render_opt_brightness_override,
+    render_opt_use_compositor,
+    render_opt_outline_strategy,
+    render_opt_engine,
+)
 from ..api.ui.about import AboutPanel
 from ..api.ui.camera_set_panel import CameraSetPanel
 from ..api.ui.mmd_blink_panel import (
@@ -34,6 +45,10 @@ from ..api.ui.mmd_set_panel import (
     OpenLipsConfigFolderOperator,
 )
 from ..api.ui.render_preset_panel import RenderPresetPanel
+from ..api.ui.render_optimizer_panel import (
+    RenderOptimizerPanel,
+    RenderOptimizerAdvancedPanel,
+)
 
 
 class AddonManager:
@@ -64,6 +79,10 @@ class AddonManager:
         RandomBlinkPanel,
         RandomBlinkConfigPanel,
         AboutPanel,
+        RenderOptimizerApplyOperator,
+        RenderOptimizerResetOperator,
+        RenderOptimizerPanel,
+        RenderOptimizerAdvancedPanel,
     )
 
     _scene_property_names = (
@@ -88,6 +107,11 @@ class AddonManager:
         "blink_end_frame",
         "blinking_frequency",
         "blinking_wave_ratio",
+        "render_opt_preset",
+        "render_opt_brightness_override",
+        "render_opt_use_compositor",
+        "render_opt_outline_strategy",
+        "render_opt_engine",
     )
 
     @staticmethod
@@ -158,6 +182,13 @@ class AddonManager:
         scene.blink_end_frame = blink_end_frame
         scene.blinking_frequency = blinking_frequency
         scene.blinking_wave_ratio = blinking_wave_ratio
+
+        # Render Optimizer
+        scene.render_opt_preset = render_opt_preset
+        scene.render_opt_brightness_override = render_opt_brightness_override
+        scene.render_opt_use_compositor = render_opt_use_compositor
+        scene.render_opt_outline_strategy = render_opt_outline_strategy
+        scene.render_opt_engine = render_opt_engine
 
     @staticmethod
     def unregister_scene():
