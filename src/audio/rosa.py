@@ -1,4 +1,3 @@
-# pylint: skip-file
 # -*- coding: utf-8 -*-
 # Copyright (c) 2024, https://github.com/skys-mission and Half-Bottled Reverie
 """
@@ -6,32 +5,34 @@ Audio analysis for lip sync generation.
 """
 import os
 import sys
+
 import bpy  # pylint: disable=import-error
+
 from ..core.compat import get_bundled_python_lib_path
+from ..util.logger import Log
 from .viseme_curve import compute_openness, score_visemes, zero_weights
 
+
 def load_pkg():
-    """
-    ...
-    """
+    """将捆绑的 Python 依赖目录注入 ``sys.path``，使后续 import 可解析。"""
     addon_dir = os.path.abspath(os.path.dirname(__file__))
     _ = bpy.app.version
     plib_path = get_bundled_python_lib_path(addon_dir)
     if plib_path not in sys.path:
         sys.path.append(plib_path)
 
+
 load_pkg()
 
-import librosa
-import numpy as np
+# pylint: disable=wrong-import-position,wrong-import-order
+import librosa  # noqa: E402  # pylint: disable=import-error
+import numpy as np  # noqa: E402
+# pylint: enable=wrong-import-position,wrong-import-order
 
 
-# 加载音频文件
 def load_audio(file_path):
-    """
-    ...
-    """
-    y, sr = librosa.load(file_path, sr=16000)  # 加载音频（采样率 16kHz）
+    """以 16kHz 采样率读取音频文件，返回 (波形, 采样率)。"""
+    y, sr = librosa.load(file_path, sr=16000)
     return y, sr
 
 
@@ -45,7 +46,7 @@ def _estimate_formants(frame, sr):
 
     valid_spectrum = spectrum[valid_mask]
     valid_freqs = freqs[valid_mask]
-    if not len(valid_spectrum):
+    if valid_spectrum.size == 0:
         return None, None
 
     peak_count = min(12, len(valid_spectrum))
@@ -72,7 +73,8 @@ def _estimate_formants(frame, sr):
     return None, None
 
 
-def rosa(audio_path, db_threshold=-50, rms_threshold=0.01):
+def rosa(audio_path, db_threshold=-50, rms_threshold=0.01):  # pylint: disable=too-many-locals
+    """对 16kHz 单声道 WAV 计算 viseme 时间序列样本。"""
     y, sr = load_audio(audio_path)
     frame_length = 1024
     hop_length = 160
@@ -103,6 +105,6 @@ def rosa(audio_path, db_threshold=-50, rms_threshold=0.01):
     if os.path.exists(audio_path):
         try:
             os.remove(audio_path)
-        except Exception as e:
-            print(f"删除临时文件 {audio_path} 时出错: {e}")
+        except OSError as exc:
+            Log.warning(f"Failed to remove temp audio file {audio_path}: {exc}")
     return results

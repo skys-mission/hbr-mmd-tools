@@ -5,8 +5,13 @@
 """
 from ..api.bridge import Bridge
 from ..api.handler.camera import CameraApplySettingsOperator
+from ..api.handler.render_optimizer import (
+    RenderOptimizerApplyOperator,
+    RenderOptimizerResetOperator,
+)
 from ..api.scene.camera_set_scene import CameraSettingsProperties
-from ..api.scene.mmd_set import (lips_audio_path, lips_start_frame, lips_generation_preset,
+from ..api.scene.mmd_set import (lips_audio_path, lips_audio_source, lips_timeline_audio_strip,
+                                 lips_start_frame, lips_generation_preset,
                                  lips_use_custom_tuning, buffer_frame,
                                  approach_speed, db_threshold, \
                                  rms_threshold, max_morph_value,
@@ -16,6 +21,13 @@ from ..api.scene.mmd_set import (lips_audio_path, lips_start_frame, lips_generat
                                  blink_config_selection, blink_custom_config_path)
 from ..api.scene.render_preset_scene import (
     resolution_preset, aspect_ratio_preset, orientation_preset)
+from ..api.scene.render_optimizer_scene import (
+    render_opt_preset,
+    render_opt_brightness_override,
+    render_opt_use_compositor,
+    render_opt_outline_strategy,
+    render_opt_engine,
+)
 from ..api.ui.about import AboutPanel
 from ..api.ui.camera_set_panel import CameraSetPanel
 from ..api.ui.mmd_blink_panel import (
@@ -34,6 +46,10 @@ from ..api.ui.mmd_set_panel import (
     OpenLipsConfigFolderOperator,
 )
 from ..api.ui.render_preset_panel import RenderPresetPanel
+from ..api.ui.render_optimizer_panel import (
+    RenderOptimizerPanel,
+    RenderOptimizerAdvancedPanel,
+)
 
 
 class AddonManager:
@@ -64,6 +80,41 @@ class AddonManager:
         RandomBlinkPanel,
         RandomBlinkConfigPanel,
         AboutPanel,
+        RenderOptimizerApplyOperator,
+        RenderOptimizerResetOperator,
+        RenderOptimizerPanel,
+        RenderOptimizerAdvancedPanel,
+    )
+
+    _scene_property_names = (
+        "resolution_preset",
+        "aspect_ratio_preset",
+        "orientation_preset",
+        "camera_settings",
+        "lips_audio_path",
+        "lips_audio_source",
+        "lips_timeline_audio_strip",
+        "lips_config_selection",
+        "lips_custom_config_path",
+        "lips_start_frame",
+        "lips_generation_preset",
+        "lips_use_custom_tuning",
+        "buffer_frame",
+        "approach_speed",
+        "db_threshold",
+        "rms_threshold",
+        "max_morph_value",
+        "blink_config_selection",
+        "blink_custom_config_path",
+        "blink_start_frame",
+        "blink_end_frame",
+        "blinking_frequency",
+        "blinking_wave_ratio",
+        "render_opt_preset",
+        "render_opt_brightness_override",
+        "render_opt_use_compositor",
+        "render_opt_outline_strategy",
+        "render_opt_engine",
     )
 
     @staticmethod
@@ -116,6 +167,8 @@ class AddonManager:
 
         # MMD
         scene.lips_audio_path = lips_audio_path
+        scene.lips_audio_source = lips_audio_source
+        scene.lips_timeline_audio_strip = lips_timeline_audio_strip
         scene.lips_config_selection = lips_config_selection
         scene.lips_custom_config_path = lips_custom_config_path
         scene.lips_start_frame = lips_start_frame
@@ -135,57 +188,23 @@ class AddonManager:
         scene.blinking_frequency = blinking_frequency
         scene.blinking_wave_ratio = blinking_wave_ratio
 
+        # Render Optimizer
+        scene.render_opt_preset = render_opt_preset
+        scene.render_opt_brightness_override = render_opt_brightness_override
+        scene.render_opt_use_compositor = render_opt_use_compositor
+        scene.render_opt_outline_strategy = render_opt_outline_strategy
+        scene.render_opt_engine = render_opt_engine
+
     @staticmethod
-    def unregister_scene():  # pylint: disable=too-many-branches
+    def unregister_scene():
         """
         注销场景属性。
         这些属性包括渲染预设、摄像机设置等。
         """
         scene = Bridge.Types.get_scene()
-
-        # 删除Blender Scene
-        if hasattr(scene, 'resolution_preset'):
-            del scene.resolution_preset
-        if hasattr(scene, 'aspect_ratio_preset'):
-            del scene.aspect_ratio_preset
-        if hasattr(scene, 'orientation_preset'):
-            del scene.orientation_preset
-        if hasattr(scene, 'camera_settings'):
-            del scene.camera_settings
-        if hasattr(scene, 'lips_audio_path'):
-            del scene.lips_audio_path
-        if hasattr(scene, 'lips_config_selection'):
-            del scene.lips_config_selection
-        if hasattr(scene, 'lips_custom_config_path'):
-            del scene.lips_custom_config_path
-        if hasattr(scene, 'lips_start_frame'):
-            del scene.lips_start_frame
-        if hasattr(scene, 'lips_generation_preset'):
-            del scene.lips_generation_preset
-        if hasattr(scene, 'lips_use_custom_tuning'):
-            del scene.lips_use_custom_tuning
-        if hasattr(scene, 'buffer_frame'):
-            del scene.buffer_frame
-        if hasattr(scene, 'approach_speed'):
-            del scene.approach_speed
-        if hasattr(scene, 'db_threshold'):
-            del scene.db_threshold
-        if hasattr(scene, 'rms_threshold'):
-            del scene.rms_threshold
-        if hasattr(scene, 'max_morph_value'):
-            del scene.max_morph_value
-        if hasattr(scene, 'blink_config_selection'):
-            del scene.blink_config_selection
-        if hasattr(scene, 'blink_custom_config_path'):
-            del scene.blink_custom_config_path
-        if hasattr(scene, 'blink_start_frame'):
-            del scene.blink_start_frame
-        if hasattr(scene, 'blink_end_frame'):
-            del scene.blink_end_frame
-        if hasattr(scene, 'blinking_frequency'):
-            del scene.blinking_frequency
-        if hasattr(scene, 'blinking_wave_ratio'):
-            del scene.blinking_wave_ratio
+        for prop_name in AddonManager._scene_property_names:
+            if hasattr(scene, prop_name):
+                delattr(scene, prop_name)
 
     @staticmethod
     def register_classes():

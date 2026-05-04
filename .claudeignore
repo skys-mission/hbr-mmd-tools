@@ -163,10 +163,3 @@ cython_debug/
 .idea/
 
 tmp.py
-
-# AI
-AGENTS.md
-.codex
-CLAUDE.md
-.claude
-learn-data

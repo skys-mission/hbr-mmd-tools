@@ -30,27 +30,88 @@ def generate_lip_sync(context):
     """执行口型生成。"""
     scene = context.scene
     fps = scene.render.fps
+    wav_path = _resolve_audio_path(scene)
+
+    start_frame = scene.lips_start_frame
+    if scene.lips_audio_source == 'timeline':
+        strip = _find_timeline_audio_strip(scene)
+        if strip is not None:
+            timeline_start = int(strip.frame_final_start)
+            if timeline_start != start_frame:
+                Log.info(
+                    f"Locking start frame to timeline audio start: "
+                    f"{start_frame} -> {timeline_start}"
+                )
+                start_frame = timeline_start
+
     config = load_lip_sync_config(scene.lips_config_selection)
     tuning = _resolve_lip_sync_tuning(scene)
     lips = Lips.mmd_lips_gen(
-        wav_path=scene.lips_audio_path,
+        wav_path=wav_path,
         buffer=tuning["buffer"],
         approach_speed=tuning["approach_speed"],
         db_threshold=tuning["db_threshold"],
         rms_threshold=tuning["rms_threshold"],
         max_morph_value=tuning["max_morph_value"],
-        start_frame=scene.lips_start_frame,
+        start_frame=start_frame,
         fps=fps,
         anticipation_scale=tuning["anticipation_scale"],
     )
     meshes = find_mesh_with_config(context, config)
     for mesh in meshes:
-        set_lips_to_mesh_with_config(mesh, lips, scene.lips_start_frame, config)
+        set_lips_to_mesh_with_config(mesh, lips, start_frame, config)
     return {
         "config": config,
         "mesh_count": len(meshes),
         "lips": lips,
     }
+
+
+def _find_timeline_audio_strip(scene):
+    """根据场景属性查找选中的时间线音频片段。"""
+    se = scene.sequence_editor
+    if not se:
+        return None
+    selected_uid = scene.lips_timeline_audio_strip
+    if not selected_uid:
+        return None
+    for strip in se.sequences:
+        uid = f"{strip.channel}:{strip.name}"
+        if uid == selected_uid:
+            return strip
+    return None
+
+
+def _resolve_audio_path(scene):
+    """根据音频源设置解析音频文件路径。"""
+    import bpy  # pylint: disable=import-outside-toplevel,import-error
+
+    if scene.lips_audio_source == 'file':
+        path = scene.lips_audio_path
+        if not path:
+            raise ValueError("No audio file path specified")
+        return path
+
+    # timeline mode
+    strip = _find_timeline_audio_strip(scene)
+    if strip is None:
+        raise ValueError(
+            "No audio strip selected from timeline. "
+            "Please add audio to the VSE timeline and select a strip."
+        )
+
+    filepath = None
+    if strip.type == 'SOUND':
+        filepath = getattr(strip.sound, 'filepath', None)
+    elif strip.type == 'MOVIE':
+        filepath = getattr(getattr(strip, 'sound', None), 'filepath', None)
+
+    if not filepath:
+        raise ValueError(f"Selected strip '{strip.name}' has no valid audio filepath.")
+
+    abs_path = bpy.path.abspath(filepath)
+    Log.info(f"Timeline audio resolved: {strip.name} -> {abs_path}")
+    return abs_path
 
 
 def _resolve_lip_sync_tuning(scene):
@@ -150,6 +211,7 @@ def _apply_adjustment_rule(value, rule):
         base_value = base_value ** (1.0 / adjustment_factor)
 
     adjusted_value = base_value * priority
+    # 强制保留余量，避免目标 morph 被精确锁定到 1.0 时与其他形态键叠加产生穿模
     return min(max(adjusted_value, 0.0), 0.99)
 
 

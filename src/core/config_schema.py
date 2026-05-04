@@ -43,8 +43,6 @@ def validate_config(config_type, config_data):
     allowed_fields = {"name", "description", "version", "author", "type", "shape_keys"}
     if config_type == "lip_sync":
         allowed_fields.add("adjustment_rules")
-    if config_type == "blink":
-        allowed_fields.add("parameters")
 
     unknown_fields = sorted(set(config_data.keys()) - allowed_fields)
     if unknown_fields:
@@ -77,8 +75,6 @@ def validate_config(config_type, config_data):
             config_type,
             config_data.get("adjustment_rules", {})
         )
-    if config_type == "blink" and "parameters" in config_data:
-        normalized["parameters"] = _validate_blink_parameters(config_data.get("parameters"))
 
     return normalized
 
@@ -158,36 +154,6 @@ def _validate_adjustment_rules(config_type, adjustment_rules):
                 f"Duplicate canonical key in adjustment_rules: {normalized_name}"
             )
         normalized[normalized_name] = normalized_rule
-
-    return normalized
-
-
-def _validate_blink_parameters(parameters):
-    if not isinstance(parameters, dict):
-        raise ConfigValidationError("Field 'parameters' must be an object")
-
-    normalized = {}
-    if "default_interval_seconds" in parameters:
-        normalized["default_interval_seconds"] = _validate_number(
-            parameters["default_interval_seconds"],
-            "parameters.default_interval_seconds",
-            minimum=0.0,
-        )
-    if "default_wave_ratio" in parameters:
-        normalized["default_wave_ratio"] = _validate_number(
-            parameters["default_wave_ratio"],
-            "parameters.default_wave_ratio",
-            minimum=0.0,
-            maximum=1.0,
-        )
-
-    unknown_fields = sorted(
-        set(parameters.keys()) - {"default_interval_seconds", "default_wave_ratio"}
-    )
-    if unknown_fields:
-        raise ConfigValidationError(
-            f"Unknown fields in parameters: {', '.join(unknown_fields)}"
-        )
 
     return normalized
 

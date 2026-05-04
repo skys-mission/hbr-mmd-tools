@@ -1,0 +1,5 @@
+[tool.pylint.messages_control]
+disable = ["import-error"]
+
+[tool.pylint.reports]
+fail-under = 9.9

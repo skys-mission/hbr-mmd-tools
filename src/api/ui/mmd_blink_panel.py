@@ -4,15 +4,11 @@
 """
 随机眨眼面板
 """
-import os
-import subprocess
-import sys
-
 import bpy  # pylint: disable=import-error
 
-from ...core.config_manager import get_config_manager
 from ...services.blink_service import generate_random_blink
 from ...util.logger import Log
+from .config_ops import import_user_config, open_user_config_folder
 
 
 class RandomBlinkPanel(bpy.types.Panel):  # pylint: disable=too-few-public-methods
@@ -93,32 +89,13 @@ class ImportBlinkConfigOperator(bpy.types.Operator):  # pylint: disable=too-few-
 
     def execute(self, context):
         """执行导入配置"""
-        scene = context.scene
-
-        if not scene.blink_custom_config_path:
-            self.report({'ERROR'}, "Please select a custom config file")
-            return {'CANCELLED'}
-
-        config_manager = get_config_manager()
-        config_name = os.path.splitext(os.path.basename(scene.blink_custom_config_path))[0]
-
-        imported_entry = config_manager.import_config(
-            'blink',
-            scene.blink_custom_config_path,
-            config_name,
+        return import_user_config(
+            self,
+            context,
+            config_type='blink',
+            source_path_attr='blink_custom_config_path',
+            selection_attr='blink_config_selection',
         )
-        if imported_entry:
-            self.report({'INFO'}, f"Successfully imported config: {config_name}")
-            scene.blink_config_selection = imported_entry['id']
-            # 清空自定义配置路径
-            scene.blink_custom_config_path = ""
-            # 标记需要刷新UI
-            context.area.tag_redraw()
-        else:
-            self.report({'ERROR'}, "Failed to import config")
-            return {'CANCELLED'}
-
-        return {'FINISHED'}
 
 
 class OpenBlinkConfigFolderOperator(bpy.types.Operator):  # pylint: disable=too-few-public-methods
@@ -129,34 +106,11 @@ class OpenBlinkConfigFolderOperator(bpy.types.Operator):  # pylint: disable=too-
 
     def execute(self, _context):
         """执行打开文件夹"""
-        config_manager = get_config_manager()
-
-        blink_config_dir = config_manager.get_user_config_dir('blink')
-
-        # 确保目录存在
-        os.makedirs(blink_config_dir, exist_ok=True)
-
-        # 打开文件夹（跨平台兼容）
-        try:
-            if os.name == 'nt':  # Windows
-                startfile = getattr(os, "startfile", None)
-                if not callable(startfile):
-                    raise OSError("os.startfile is unavailable on this platform")
-                startfile(blink_config_dir)  # pylint: disable=not-callable
-            elif os.name == 'posix':  # macOS/Linux
-                command = (
-                    ['open', blink_config_dir]
-                    if sys.platform == 'darwin'
-                    else ['xdg-open', blink_config_dir]
-                )
-                subprocess.run(command, check=True)
-
-            self.report({'INFO'}, f"Opened blink config folder: {blink_config_dir}")
-        except (OSError, subprocess.SubprocessError) as exc:
-            self.report({'ERROR'}, f"Failed to open folder: {str(exc)}")
-            return {'CANCELLED'}
-
-        return {'FINISHED'}
+        return open_user_config_folder(
+            self,
+            config_type='blink',
+            success_message_prefix="Opened blink config folder",
+        )
 
 
 class RandomBlinkOperator(bpy.types.Operator):  # pylint: disable=too-few-public-methods
