@@ -108,9 +108,6 @@ def make_aggressive_preset(base_preset, cat):
         )
         preset['Roughness'] = max(0.25, preset.get('Roughness', 0.38) * 0.75)
     elif cat == 'eye_white':
-        preset['Subsurface Weight'] = min(
-            0.15, preset.get('Subsurface Weight', 0) * 2.0,
-        )
         preset['Coat Weight'] = min(
             0.6, preset.get('Coat Weight', 0) + 0.3,
         )

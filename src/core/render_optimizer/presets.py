@@ -40,8 +40,7 @@ MATERIAL_PRESETS = {
         'Coat Roughness': 0.08, 'IOR': 1.45,
     },
     'eye_white': {
-        'Roughness': 0.30, 'Specular IOR Level': 0.45, 'Subsurface Weight': 0.04,
-        'Subsurface Scale': 0.002, 'Subsurface Radius': (0.45, 0.18, 0.10),
+        'Roughness': 0.30, 'Specular IOR Level': 0.45,
     },
     'eye_shadow': {
         'Roughness': 0.65,
