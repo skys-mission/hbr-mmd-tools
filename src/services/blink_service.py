@@ -130,10 +130,8 @@ def generate_blink_frames(  # pylint: disable=too-many-arguments,too-many-positi
         open_frames = max(1, int(round(open_dur * fps)))
 
         # 确保至少有关闭和睁开
-        if close_frames < 1:
-            close_frames = 1
-        if open_frames < 1:
-            open_frames = 1
+        close_frames = max(close_frames, 1)
+        open_frames = max(open_frames, 1)
 
         keyframes = []
 

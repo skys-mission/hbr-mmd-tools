@@ -31,7 +31,11 @@ class RenderOptimizerPanel(bpy.types.Panel):  # pylint: disable=too-few-public-m
         # 执行按钮
         row = layout.row(align=True)
         row.scale_y = 1.3
-        row.operator("hbr_mmd.render_optimizer_apply", text="Apply Optimization", icon="RENDER_STILL")
+        row.operator(
+            "hbr_mmd.render_optimizer_apply",
+            text="Apply Optimization",
+            icon="RENDER_STILL",
+        )
 
         row = layout.row(align=True)
         row.operator("hbr_mmd.render_optimizer_reset", text="Reset", icon="TRASH")

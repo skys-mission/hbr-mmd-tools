@@ -55,7 +55,7 @@ def _setup_freestyle(scene, mesh, strategy):
     quality, topo_info = check_mesh_topology(mesh)
 
     if strategy == 'freestyle_auto':
-        use_material_boundary = (quality == 'clean')
+        use_material_boundary = quality == 'clean'
     else:
         use_material_boundary = False
 

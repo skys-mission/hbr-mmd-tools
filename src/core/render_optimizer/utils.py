@@ -80,7 +80,7 @@ def find_armature_for_meshes(meshes, armatures):
     # 尝试找到与主 mesh 同父级的 armature
     parent = primary.parent
     for arm in armatures:
-        if arm.parent == parent or arm == parent:
+        if parent in (arm.parent, arm):
             return arm
     return armatures[0]
 

@@ -17,7 +17,7 @@ from ..core.render_optimizer.material import enhance_materials
 from ..core.render_optimizer.lighting import setup_lights
 from ..core.render_optimizer.world_env import setup_world
 from ..core.render_optimizer.compositor import setup_compositor, setup_render
-from ..core.render_optimizer.outline import setup_outline, OUTLINE_STRATEGIES
+from ..core.render_optimizer.outline import setup_outline
 from ..core.render_optimizer.presets import ENGINE_EEVEE_ID, ENGINE_CYCLES_ID
 from ..util.logger import Log
 
@@ -49,8 +49,8 @@ def apply_render_optimizer(context):
     # 4. 解析预设
     preset = scene.render_opt_preset
     is_pbr = preset in ('PBR', 'PBR_AGGRESSIVE')
-    aggressive = (preset == 'PBR_AGGRESSIVE')
-    is_npr = (preset == 'NPR')
+    aggressive = preset == 'PBR_AGGRESSIVE'
+    is_npr = preset == 'NPR'
 
     # 5. 清理旧对象
     cleanup_auto_objects()
