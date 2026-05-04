@@ -10,7 +10,8 @@ from ..api.handler.render_optimizer import (
     RenderOptimizerResetOperator,
 )
 from ..api.scene.camera_set_scene import CameraSettingsProperties
-from ..api.scene.mmd_set import (lips_audio_path, lips_start_frame, lips_generation_preset,
+from ..api.scene.mmd_set import (lips_audio_path, lips_audio_source, lips_timeline_audio_strip,
+                                 lips_start_frame, lips_generation_preset,
                                  lips_use_custom_tuning, buffer_frame,
                                  approach_speed, db_threshold, \
                                  rms_threshold, max_morph_value,
@@ -91,6 +92,8 @@ class AddonManager:
         "orientation_preset",
         "camera_settings",
         "lips_audio_path",
+        "lips_audio_source",
+        "lips_timeline_audio_strip",
         "lips_config_selection",
         "lips_custom_config_path",
         "lips_start_frame",
@@ -164,6 +167,8 @@ class AddonManager:
 
         # MMD
         scene.lips_audio_path = lips_audio_path
+        scene.lips_audio_source = lips_audio_source
+        scene.lips_timeline_audio_strip = lips_timeline_audio_strip
         scene.lips_config_selection = lips_config_selection
         scene.lips_custom_config_path = lips_custom_config_path
         scene.lips_start_frame = lips_start_frame

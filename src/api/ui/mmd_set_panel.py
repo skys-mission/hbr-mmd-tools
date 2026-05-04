@@ -6,7 +6,7 @@ MMD面板
 """
 import bpy  # pylint: disable=import-error
 
-from ...services.lip_sync_service import generate_lip_sync
+from ...services.lip_sync_service import generate_lip_sync, _find_timeline_audio_strip
 from ...util.logger import Log
 from .config_ops import import_user_config, open_user_config_folder
 
@@ -42,7 +42,19 @@ class MMDHelperPanel(bpy.types.Panel):  # pylint: disable=too-few-public-methods
         layout = self.layout
         scene = context.scene
 
-        layout.prop(scene, "lips_audio_path")
+        layout.prop(scene, "lips_audio_source")
+
+        if scene.lips_audio_source == 'file':
+            layout.prop(scene, "lips_audio_path")
+        else:
+            layout.prop(scene, "lips_timeline_audio_strip")
+            strip = _find_timeline_audio_strip(scene)
+            if strip is not None:
+                layout.label(
+                    text=f"Audio starts at frame {int(strip.frame_final_start)}",
+                    icon='INFO',
+                )
+
         layout.prop(scene, "lips_start_frame")
         layout.prop(scene, "lips_generation_preset")
 

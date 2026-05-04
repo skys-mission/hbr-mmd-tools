@@ -27,6 +27,16 @@ def get_translation_zh_dict(local):
 translation_zh_map = {
     ("*", "MMD Lip Gen"): "MMD口型生成",
     ("*", "Audio Path"): "音频文件",
+    ("*", "Audio Source"): "音频来源",
+    ("*", "File"): "文件",
+    ("*", "Timeline"): "时间线",
+    ("*", "Where to get the audio for lip sync generation"): "选择口型生成所使用的音频来源",
+    ("*", "Use an audio file from disk"): "从磁盘选择音频文件",
+    ("*", "Use audio from the Video Sequence Editor timeline"): "使用视频序列编辑器时间线中的音频",
+    ("*", "No audio in timeline"): "时间线中没有音频",
+    ("*", "Audio Strip"): "音频片段",
+    ("*", "Select an audio strip from the timeline"): "从时间线中选择一个音频片段",
+    ("*", "Audio starts at frame"): "音频起始帧",
     ("*", "Bilibili cover image"): "必剪封面",
     ("*", "382:239 Bilibili cover image"): "382:239 B站封面",
     ("*", "Other"): "其它",
@@ -144,6 +154,8 @@ translation_zh_map = {
     ("*", "Apply Optimization"): "应用优化",
     ("*", "Automatically optimize scene rendering based on current settings"): "根据当前设置自动优化场景渲染",
     ("*", "Reset"): "重置",
-    ("*", "Delete auto-created lights, reset World, disable Compositor and Freestyle"): "删除自动创建的灯光，重置World，关闭合成器和Freestyle",
+    ("*", "Delete auto-created lights, reset World, disable Compositor and Freestyle"): (
+        "删除自动创建的灯光，重置World，关闭合成器和Freestyle"
+    ),
     ("*", "Select target model, then apply"): "选择目标模型后应用",
 }

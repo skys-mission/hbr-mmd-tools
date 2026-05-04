@@ -8,6 +8,47 @@ import bpy  # pylint: disable=import-error
 from ...core.config_manager import get_config_manager
 from ...core.lip_sync_profiles import DEFAULT_LIP_SYNC_PRESET, get_lip_sync_preset_values
 
+def get_timeline_audio_items(_self, context):
+    """从 VSE 时间线动态获取音频片段列表。"""
+    se = context.scene.sequence_editor
+    if not se:
+        return [("", "None", "No audio strips found")]
+
+    items = []
+    seen_ids = set()
+    for strip in sorted(se.sequences, key=lambda s: s.channel, reverse=True):
+        if strip.type == 'SOUND':
+            filepath = getattr(strip.sound, 'filepath', None)
+        elif strip.type == 'MOVIE':
+            filepath = getattr(getattr(strip, 'sound', None), 'filepath', None)
+        else:
+            continue
+        if not filepath:
+            continue
+        uid = f"{strip.channel}:{strip.name}"
+        if uid not in seen_ids:
+            seen_ids.add(uid)
+            items.append((uid, strip.name, f"Channel {strip.channel}"))
+
+    return items if items else [("", "None", "No audio strips found")]
+
+
+lips_audio_source = bpy.props.EnumProperty(
+    name="Audio Source",
+    description="Where to get the audio for lip sync generation",
+    items=(
+        ("file", "File", "Use an audio file from disk"),
+        ("timeline", "Timeline", "Use audio from the Video Sequence Editor timeline"),
+    ),
+    default="file",
+)
+
+lips_timeline_audio_strip = bpy.props.EnumProperty(
+    name="Audio Strip",
+    description="Select an audio strip from the timeline",
+    items=get_timeline_audio_items,
+)
+
 lips_audio_path = bpy.props.StringProperty(
     name="Audio Path",
     description="Path to the Audio file.",
