@@ -117,6 +117,9 @@ translation_zh_map = {
     ("*", "blink interval"): "眨眼间隔",
     ("*", "The interval in seconds between blinks."): "眨眼的间隔时间，单位秒",
     ("*", "blinking wave ratio"): "波动比例",
+    ("*", "half blink ratio"): "半眨眼比例",
+    ("*", "Probability of a half-blink (0=never, 1=always). "
+          "Double blinks use twice this chance."): "半眨眼概率（0=从不，1=总是）。双眨眼时使用两倍此概率。",
     ("*","Blink interval = "
          "blink interval + "
          "rand(-fluctuation ratio, "

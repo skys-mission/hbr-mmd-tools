@@ -17,6 +17,7 @@ from ..api.scene.mmd_set import (lips_audio_path, lips_audio_source, lips_timeli
                                  rms_threshold, max_morph_value,
                                  blink_start_frame, blink_end_frame,
                                  blinking_frequency, blinking_wave_ratio,
+                                 blinking_half_ratio,
                                  lips_config_selection, lips_custom_config_path,
                                  blink_config_selection, blink_custom_config_path)
 from ..api.scene.render_preset_scene import (
@@ -110,6 +111,7 @@ class AddonManager:
         "blink_end_frame",
         "blinking_frequency",
         "blinking_wave_ratio",
+        "blinking_half_ratio",
         "render_opt_preset",
         "render_opt_brightness_override",
         "render_opt_use_compositor",
@@ -187,6 +189,7 @@ class AddonManager:
         scene.blink_end_frame = blink_end_frame
         scene.blinking_frequency = blinking_frequency
         scene.blinking_wave_ratio = blinking_wave_ratio
+        scene.blinking_half_ratio = blinking_half_ratio
 
         # Render Optimizer
         scene.render_opt_preset = render_opt_preset

@@ -18,12 +18,11 @@ Other languages: [简体中文](README_zh.md), [日本語](README_ja.md)
 
 | Feature | Description | Since |
 |---|---|---|
-| **MMD Lip-Sync** | Audio-driven mouth shape generation (あいうえおん) via formant analysis | v0.3 |
+| **MMD Lip-Sync** | Audio-driven mouth shape keyframe generation (あいうえおん) via formant and energy analysis; supports file or VSE timeline audio input | v0.3 |
 | **Random Blinking** | Gaussian-distributed natural blinking with half-blink and double-blink support | v0.5 |
-| **Render Optimizer** | One-click adaptive lighting, PBR/NPR material enhancement, world & compositor setup | v0.5 |
-| **Camera Presets** | Quick resolution, aspect ratio and orientation presets for MMD scenes | v0.5 |
-| **Timeline Audio Source** | Use the active audio strip from the VSE timeline as lip-sync input | v0.5 |
-| **Shape Key Helper** | Copy and rename shape keys to MMD standard names | v0.3 |
+| **Render Optimizer** *(Experimental)* | One-click adaptive lighting, PBR/NPR material enhancement, world & compositor setup | v0.5 |
+| **Render Presets** | Quick resolution, aspect ratio and orientation presets | v0.5 |
+| **Camera Settings** | Focal length, aperture and depth-of-field presets | v0.5 |
 
 ## Screenshots
 
@@ -34,7 +33,7 @@ Other languages: [简体中文](README_zh.md), [日本語](README_ja.md)
 ### Random Blinking
 ![Blink Settings](.img/blink_args.webp)
 
-### Render Optimizer
+### Render Optimizer *(Experimental)*
 > One-click setup for EEVEE / Cycles with adaptive 6-point lighting and smart material classification.
 
 ---
@@ -114,7 +113,7 @@ Generates natural blinking keyframes for the `まばたき` shape key.
 
 ---
 
-### Render Optimizer
+### Render Optimizer *(Experimental)*
 
 One-click render setup optimized for MMD-style characters.
 
@@ -166,6 +165,12 @@ pylint src/ --fail-under=9.9
 ### Notes
 
 - The bundled audio analysis dependencies are compiled for **Python 3.11** only.
+
+### AI-Assisted Development
+
+This project is developed with a heavy **vibe-coding** workflow (\>70% of code contributions).  
+The primary IDE/tool used is **Claude Code**; however, **Claude models are not used** as the generation backend.  
+LLM inference is mainly provided by **Kimi** and **DeepSeek**.
 
 ---
 
