@@ -1,157 +1,186 @@
 # HBR MMD Tools
 
+[![Release](https://img.shields.io/github/v/release/skys-mission/hbr_mmd_tools?style=flat-square)](https://github.com/skys-mission/hbr_mmd_tools/releases)
+[![License](https://img.shields.io/github/license/skys-mission/hbr_mmd_tools?style=flat-square)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.11-blue?style=flat-square)]()
 [![Pylint](https://github.com/skys-mission/hbr_mmd_tools/actions/workflows/pylint.yml/badge.svg?branch=main)](https://github.com/skys-mission/hbr_mmd_tools/actions/workflows/pylint.yml)
 [![CodeQL Advanced](https://github.com/skys-mission/hbr_mmd_tools/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/skys-mission/hbr_mmd_tools/actions/workflows/codeql.yml)
 [![Bandit](https://github.com/skys-mission/hbr_mmd_tools/actions/workflows/bandit.yml/badge.svg)](https://github.com/skys-mission/hbr_mmd_tools/actions/workflows/bandit.yml)
 
+**面向 MikuMikuDance (MMD) 工作流的 Blender 插件。**
+从音频生成口型关键帧、创建自然随机眨眼、一键 PBR/NPR 渲染优化，以及 MMD 风格角色的形态键管理工具。
+
 其它语言：[English](README.md), [日本語](README_ja.md)
 
-一个面向 MMD 工作流的 Blender 插件，提供 MMD 口型生成、随机眨眼、形态键辅助和面向 MikuMikuDance 风格角色的 Blender 工作流工具。
+---
 
-本项目现更名为 `HBR MMD Tools`，此前以另一个插件名发布。
+## 功能一览
 
-`HBR` 来自 `Half-Bottled Reverie`，`MMD Tools` 也更直接地说明了插件当前的功能定位。
+| 功能 | 说明 | 起始版本 |
+|---|---|---|
+| **MMD 口型生成** | 基于音频共振峰分析生成口型关键帧（あいうえおん） | v0.3 |
+| **随机眨眼** | 高斯分布自然眨眼，支持半眨眼与双眨眼 | v0.5 |
+| **渲染优化器** | 一键自适应布光、PBR/NPR 材质增强、环境与合成器配置 | v0.5 |
+| **相机预设** | 快速设置分辨率、纵横比与画面方向 | v0.5 |
+| **时间轴音频源** | 直接使用视频序列编辑器中的音频条作为口型输入 | v0.5 |
+| **形态键辅助** | 复制并重命名形态键为 MMD 标准名称 | v0.3 |
 
-> 当前状态
->
-> `v0.5.0` 即将发布，并会带来大量更新。
->
-> 如果当前更需要相对成熟的版本，可以先使用 `v0.3.2`。
+## 截图
 
-<!-- TOC -->
-* [HBR MMD Tools](#hbr-mmd-tools)
-  * [Download](#download)
-  * [功能](#功能)
-    * [MMD口型生成](#mmd口型生成)
-      * [使用方法](#使用方法)
-      * [参数介绍](#参数介绍)
-      * [如何适配其它模型](#如何适配其它模型)
-    * [随机眨眼](#随机眨眼)
-    * [其它功能](#其它功能)
-  * [支持](#支持)
-    * [Blender版本适配](#blender版本适配)
-    * [操作系统适配](#操作系统适配)
-  * [高版本如何安装Blender插件](#高版本如何安装blender插件)
-  * [关于开发本插件](#关于开发本插件)
-    * [注意事项](#注意事项)
-  * [开源引用](#开源引用)
-<!-- TOC -->
+### 口型生成
+![Lip Sync](.img/lip_sync.webp)
+*模型来源：KissshotSusu*
 
-## Download
+### 随机眨眼
+![Blink Settings](.img/blink_args.webp)
 
-https://github.com/skys-mission/hbr_mmd_tools/releases
+### 渲染优化器
+> 一键配置 EEVEE / Cycles 渲染，自适应 6 点布光与智能材质分类。
 
-中国大陆用户：
+---
 
-链接: https://pan.baidu.com/s/17ubgxZvXVs6goKBjtBFzXA?pwd=gmuv 提取码: gmuv 
+## 下载与安装
 
-## 功能
+**GitHub Releases：** https://github.com/skys-mission/hbr_mmd_tools/releases
 
-### MMD口型生成
+**中国大陆用户：**  
+链接: https://pan.baidu.com/s/17ubgxZvXVs6goKBjtBFzXA?pwd=gmuv 提取码: gmuv
 
-通过Vosk 音频模型识别出音素口型，添加到MMD标准模型上
+**安装步骤：**
+1. 下载最新 Release 的 `.zip` 文件。
+2. Blender 中：`编辑 → 偏好设置 → 插件 → 从磁盘安装`。
+3. 选择下载的 `.zip`，勾选启用 **HBR MMD Tools**。
 
-本插件识别的MMD模型的口型形态键名：あ，い，う，え，お, ん。除了あ以外没有的全部改到あ上，如果没有あ则报错。
+> **版本要求：** Blender **4.2 LTS 至 5.0.x**（Python 3.11）。  
+> Blender 5.1+ **暂不支持**（Python 3.13 ABI 不兼容）。
 
-警告：该功能会破坏音频时间范围内的あ，い，う，え，お, ん形态键关键帧
+---
 
+## 使用说明
 
-#### 使用方法
+### MMD 口型生成
 
-![lips_gen2.0f.webp](.img/lips_gen2.0f.webp)
+通过分析音频共振峰生成口型形态键关键帧（あ、い、う、え、お、ん）。
 
-1. 在Audio Path中选择一个音频文件（常规的音频文件大概率都可以用包括mp4）
-2. 选中一个mmd模型的任意层父级（注意，如果对象下有多个网格体包含这些形态键，则所有网格体的形态键均会被修改）
-3. 建议打开系统控制台观察进度，Mac版Blender没有此功能。（Blender菜单栏->windows->Toggle System Console）
-4. 设置参数，点击生成（~~注意当前版本会在音频文件同级目录生成一些可读的缓存文件，不会清除~~）
-5. 等待鼠标指针从数字恢复成正常
+![口型生成界面](.img/lips_gen2.0_zh.webp)
 
-#### 参数介绍
+**操作步骤：**
+1. 选择音频文件，或使用视频序列编辑器中的音频条。
+2. 选中 MMD 模型（或其任意父级对象）。
+3. 打开**系统控制台**观察进度（`窗口 → 切换系统控制台`）。
+4. 调整参数后点击**生成**。
+5. 等待鼠标指针恢复常态。
 
-![lips3.0.webp](.img/lips3.0.webp)
+**参数说明：**
 
-- Start Frame: 音频从那一帧往后
-- DB Threshold: DB降噪，如果识别不准则调高，如果识别不到则调低
-- RMS Threshold: RMS降噪，如果识别不准则调高，如果识别不到则调低
-- Delayed Opening: 延时张嘴比例
-- Speed Up Opening: 识别开始到延时张嘴的曲线速度调整参数
-- Max Morph Value: 形态键的最大阈值
+![参数面板](.img/lips3.0.webp)
 
-#### 如何适配其它模型
+| 参数 | 说明 |
+|---|---|
+| **起始帧** | 音频开始的帧位置 |
+| **DB 阈值** | dB 降噪门限；识别不准则调高，识别不到则调低 |
+| **RMS 阈值** | RMS 降噪门限；识别不准则调高，识别不到则调低 |
+| **延时张嘴比例** | 嘴完全张开前的延迟比例 |
+| **张嘴速度** | 从识别开始到延时张嘴的曲线速度 |
+| **形态键最大值** | 形态键数值上限 |
 
-比如vrm，你需要找到你的模型或者自己设置A，E，I，O，U, N的形态键，复制并改为MMD标准形态键名
+**适配非 MMD 模型**
 
-**至少要拥有あ，才能使用本功能**
+VRM 或其它模型需确保存在以下形态键（可复制已有形态键改名）：
 
-- あ = A
-- い = I
-- う = U
-- え = E
-- お = O
-- ん = N
+| MMD 名称 | 对应 |
+|---|---|
+| あ | A |
+| い | I |
+| う | U |
+| え | E |
+| お | O |
+| ん | N |
 
-如果你不会复制，可以参考：[copy_shape_key.md](docs/copy_shape_key.md)
+> **至少要拥有「あ」才能使用本功能。** 复制方法请参考：[copy_shape_key.md](docs/copy_shape_key.md)
 
-![lip_sync.webp](.img/lip_sync.webp)
-模型来源：KissshotSusu
+---
 
 ### 随机眨眼
 
-随机眨眼识别的是：まばたき ，这个形态键，如果没有你需要自己转化或制作该形态键
+为 `まばたき` 形态键生成自然眨眼关键帧。
 
-警告：该功能会破坏帧数范围内まばたき形态键关键帧
+**操作步骤：**
+1. 选中 MMD 模型（或其任意父级对象）。
+2. 打开**系统控制台**观察进度。
+3. 调整参数后点击**生成**。
+4. 等待鼠标指针恢复常态。
 
-1. 选中一个mmd模型的任意层父级（注意，如果对象下有多个网格体包含这些形态键，则所有网格体的形态键均会被修改）
-2. 建议打开系统控制台观察进度。（Blender菜单栏->windows->Toggle System Console）
-3. 设置参数，点击生成
-4. 等待鼠标指针从数字恢复成正常
+| 参数 | 说明 |
+|---|---|
+| **眨眼间隔** | 平均眨眼间隔秒数 |
+| **波动比例** | 随机性系数（0.01–1.0） |
 
-![blink_args.webp](.img/blink_args.webp)
+> **警告：** 该功能会覆盖所选帧范围内的 `まばたき` 关键帧。
 
-- blink interval: 眨眼间隔，单位秒
-- blinking wave ratio: 随机比例0.01-1可调整
+---
 
-### 其它功能
+### 渲染优化器
 
-文档编写中...
+面向 MMD 风格角色的一键渲染配置。
 
-## 支持
+**预设：**
+- **PBR** — 写实渲染，增强皮肤、头发、金属、布料等材质质感。
+- **PBR 激进** — 更强的材质差异，适合戏剧性光照。
+- **NPR** — 卡通风格渲染，支持 Freestyle 描边。
 
-### Blender版本适配
+**特性：**
+- **自适应 6 点布光** — 根据角色身高自动定位主光、补光、轮廓光、头发光、背景光、正面光。
+- **智能材质分类** — 自动识别皮肤、头发、金属、珠宝、眼睛、布料等并应用调优的 Principled BSDF 参数。
+- **色调感知环境** — 基于模型色彩分析自动配置冷/暖/中性世界环境。
+- **合成器配置** — 自动添加暗角与色彩分级节点。
+- **渲染引擎切换** — EEVEE 或 Cycles。
 
-- 主要支持的版本（本人会进行测试）
-    - 3.6 ，4.2
-- 或许可以运行的版本
-    - 大于等于3.6
-- 计划支持的版本
-    - 下一个Blender LTS版本
-- 不计划适配
-    - 小于3.6
+> **警告：** 此功能会创建自动命名的灯光和世界节点。点击**重置**按钮可清理。
 
-### 操作系统适配
+---
 
-- 当前支持
-    - windows-x64
-- 可能支持
-    - macos-arm64
-- 不计划支持
-    - linux（除非出现重大变故，否则不计划支持）
+## 兼容性
 
-## 高版本如何安装Blender插件
+### Blender 版本
 
-参考：https://docs.blender.org/manual/zh-hans/4.2/editors/preferences/addons.html#prefs-extensions-install-legacy-addon
+| 版本 | Python | 状态 |
+|---|---|---|
+| 4.2 LTS – 5.0.x | 3.11 | 已支持并测试 |
+| 5.1+ | 3.13 | **暂不支持**（ABI 不兼容） |
+| < 4.2 | — | 不支持 |
 
-## 关于开发本插件
+### 操作系统
+
+| 系统 | 状态 |
+|---|---|
+| Windows x64 | 已支持 |
+| macOS ARM64 | 实验性支持 |
+| Linux | 不计划支持 |
+
+---
+
+## 开发
+
+### 构建与检查
+
+```bash
+pip install pylint
+pylint src/ --fail-under=9.9
+```
 
 ### 注意事项
 
-- blender3.6-4.4可能需要numba库：版本<=0.60.0（其它版本Blender暂不确定）
+- 捆绑的音频分析依赖仅针对 **Python 3.11** 编译。
 
-## 开源引用
+---
 
-| 项目                         | 链接                                               | 协议                                     |
-|----------------------------|--------------------------------------------------|----------------------------------------|
-| FFmpeg                     | https://github.com/FFmpeg/FFmpeg                 | GPLv3（Releases中内嵌的工具采用协议，仓库中无ffmpeg代码） |
-| ~~Vosk-API和Vosk AI Model~~ | ~~https://github.com/alphacep/vosk-api~~         | Apache-2.0                             |
-| ~~CMU Dict~~               | ~~http://www.speech.cs.cmu.edu/cgi-bin/cmudict~~ | 2-Clause BSD License                   |
-| ~~gout-vosk tool~~         | ~~https://github.com/skys-mission/gout~~         | GPLv3                                  |
+## 开源协议
+
+[GPL-3.0](LICENSE)
+
+## 致谢
+
+| 项目 | 链接 | 协议 |
+|---|---|---|
+| FFmpeg | https://github.com/FFmpeg/FFmpeg | GPLv3（Release 中内嵌工具采用此协议） |

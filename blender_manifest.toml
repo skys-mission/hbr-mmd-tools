@@ -17,8 +17,8 @@ tags = ["3D View", "Camera", "Animation", "Render"]
 
 blender_version_min = "4.2.0"
 
-# 可选：支持的最大版本
-# blender_version_max = "5.1.0"
+# 不支持 Blender 5.1+（Python 升级至 3.13，bundled 依赖暂不兼容）
+blender_version_max = "5.0.39"
 
 # 符合 https://spdx.org/licenses/ 的许可证（使用 "SPDX: 前缀）
 # https://docs.blender.org/manual/en/dev/advanced/extensions/licenses.html

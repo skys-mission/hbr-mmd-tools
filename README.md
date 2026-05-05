@@ -1,152 +1,180 @@
 # HBR MMD Tools
 
+[![Release](https://img.shields.io/github/v/release/skys-mission/hbr_mmd_tools?style=flat-square)](https://github.com/skys-mission/hbr_mmd_tools/releases)
+[![License](https://img.shields.io/github/license/skys-mission/hbr_mmd_tools?style=flat-square)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.11-blue?style=flat-square)]()
 [![Pylint](https://github.com/skys-mission/hbr_mmd_tools/actions/workflows/pylint.yml/badge.svg?branch=main)](https://github.com/skys-mission/hbr_mmd_tools/actions/workflows/pylint.yml)
 [![CodeQL Advanced](https://github.com/skys-mission/hbr_mmd_tools/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/skys-mission/hbr_mmd_tools/actions/workflows/codeql.yml)
 [![Bandit](https://github.com/skys-mission/hbr_mmd_tools/actions/workflows/bandit.yml/badge.svg)](https://github.com/skys-mission/hbr_mmd_tools/actions/workflows/bandit.yml)
 
+**A Blender add-on for MikuMikuDance (MMD) workflows.**
+Generate lip-sync keyframes from audio, create natural random blinking, optimize renders with one-click PBR/NPR setup, and manage shape keys for MMD-style characters.
+
 Other languages: [简体中文](README_zh.md), [日本語](README_ja.md)
 
-A Blender add-on for MMD workflows, including MMD lip sync generation, random blinking, shape key utilities, and workflow tools for MikuMikuDance-style characters in Blender.
+---
 
-This project is renamed to `HBR MMD Tools`. It was previously published under a different add-on name.
+## Feature Overview
 
-`HBR` comes from `Half-Bottled Reverie`, and `MMD Tools` reflects the add-on's current focus more directly.
+| Feature | Description | Since |
+|---|---|---|
+| **MMD Lip-Sync** | Audio-driven mouth shape generation (あいうえおん) via formant analysis | v0.3 |
+| **Random Blinking** | Gaussian-distributed natural blinking with half-blink and double-blink support | v0.5 |
+| **Render Optimizer** | One-click adaptive lighting, PBR/NPR material enhancement, world & compositor setup | v0.5 |
+| **Camera Presets** | Quick resolution, aspect ratio and orientation presets for MMD scenes | v0.5 |
+| **Timeline Audio Source** | Use the active audio strip from the VSE timeline as lip-sync input | v0.5 |
+| **Shape Key Helper** | Copy and rename shape keys to MMD standard names | v0.3 |
 
-> Status
->
-> `v0.5.0` is coming soon and will include major updates.
->
-> If you need a more established release right now, please use `v0.3.2` first.
+## Screenshots
 
-<!-- TOC -->
-* [HBR MMD Tools](#hbr-mmd-tools)
-  * [Download](#download)
-  * [Features](#features)
-    * [MMD Lip-Sync Generation](#mmd-lip-sync-generation)
-      * [Usage](#usage)
-      * [Parameter Introduction](#parameter-introduction)
-      * [How to Adapt to Other Models](#how-to-adapt-to-other-models)
-    * [Random Blinking](#random-blinking)
-    * [Other Features](#other-features)
-  * [Support](#support)
-    * [Blender Version Compatibility](#blender-version-compatibility)
-    * [Operating System Compatibility](#operating-system-compatibility)
-  * [How to Install Blender Plugins in Newer Versions](#how-to-install-blender-plugins-in-newer-versions)
-  * [About Developing This Plugin](#about-developing-this-plugin)
-    * [Notes](#notes)
-  * [Open Source References](#open-source-references)
-<!-- TOC -->
+### Lip-Sync Generation
+![Lip Sync](.img/lip_sync.webp)
+*Model: KissshotSusu*
 
-## Download
+### Random Blinking
+![Blink Settings](.img/blink_args.webp)
 
-https://github.com/skys-mission/hbr_mmd_tools/releases
+### Render Optimizer
+> One-click setup for EEVEE / Cycles with adaptive 6-point lighting and smart material classification.
 
-## Features
+---
+
+## Installation
+
+1. Download the latest release from [Releases](https://github.com/skys-mission/hbr_mmd_tools/releases).
+2. In Blender: `Edit → Preferences → Add-ons → Install from Disk`.
+3. Select the downloaded `.zip` and enable **HBR MMD Tools**.
+
+> **Version Requirement:** Blender **4.2 LTS to 5.0.x** (Python 3.11).  
+> Blender 5.1+ is **not supported** due to Python 3.13 ABI changes.
+
+---
+
+## Usage
 
 ### MMD Lip-Sync Generation
 
-Recognizes phoneme mouth shapes through the Vosk audio model and applies them to MMD standard models.
+Generates mouth shape keyframes (あ, い, う, え, お, ん) by analyzing audio formants.
 
-MMD model mouth shape morph keys recognized by this plugin: あ, い, う, え, お, ん. All except あ will be mapped to あ if they don't exist, and an error will occur if あ doesn't exist.
+![Lip Sync UI](.img/lips_gen2.0f.webp)
 
-Warning: This function will overwrite the morph keyframes for あ, い, う, え, お, ん within the audio time range.
+**Steps:**
+1. Select an audio file or use the active VSE audio strip.
+2. Select an MMD model (or any parent object in its hierarchy).
+3. Open **System Console** to monitor progress (`Window → Toggle System Console`).
+4. Adjust parameters and click **Generate**.
+5. Wait for the cursor to return to normal.
 
-#### Usage
+**Parameters:**
 
-![lips_gen2.0f.webp](.img/lips_gen2.0f.webp)
+![Parameters](.img/lips3.0.webp)
 
-1. Select an audio file in Audio Path (most common audio formats are likely to work, including mp4)
-2. Select any parent level of an MMD model (note: if there are multiple meshes under the object containing these morph keys, all mesh morph keys will be modified)
-3. It is recommended to open the system console to observe progress. Mac Blender does not have this feature. (Blender menu bar -> windows -> Toggle System Console)
-4. Set parameters and click Generate (~~note that the current version will generate some readable cache files in the same directory as the audio file, which will not be cleared~~)
-5. Wait for the mouse pointer to change from a number back to normal
+| Parameter | Description |
+|---|---|
+| **Start Frame** | Frame where the audio begins |
+| **DB Threshold** | Noise floor in dB; raise if inaccurate, lower if nothing is detected |
+| **RMS Threshold** | RMS noise gate; raise if inaccurate, lower if nothing is detected |
+| **Delayed Opening** | Delay ratio before mouth fully opens |
+| **Speed Up Opening** | Curve speed from recognition start to delayed opening |
+| **Max Morph Value** | Maximum morph key value cap |
 
-#### Parameter Introduction
+**Adapting to Non-MMD Models**
 
-![lips3.0.webp](.img/lips3.0.webp)
+For VRM or other models, ensure the following shape keys exist (or copy existing ones):
 
-- Start Frame: Which frame the audio starts from
-- DB Threshold: DB noise reduction, increase if recognition is inaccurate, decrease if not recognized
-- RMS Threshold: RMS noise reduction, increase if recognition is inaccurate, decrease if not recognized
-- Delayed Opening: Delayed mouth opening ratio
-- Speed Up Opening: Curve speed adjustment parameter from recognition start to delayed mouth opening
-- Max Morph Value: Maximum threshold for morph keys
+| MMD | Equivalent |
+|---|---|
+| あ | A |
+| い | I |
+| う | U |
+| え | E |
+| お | O |
+| ん | N |
 
-#### How to Adapt to Other Models
+> **At least "あ" must exist.** See [copy_shape_key.md](docs/copy_shape_key.md) for how to copy shape keys.
 
-For example, with VRM, you need to find or set up A, E, I, O, U, N morph keys for your model, and copy and change them to MMD standard morph key names.
-
-**At least あ is required to use this function**
-
-- あ = A
-- い = I
-- う = U
-- え = E
-- お = O
-- ん = N
-
-If you don't know how to copy, refer to: [copy_shape_key.md](docs/copy_shape_key.md)
-
-![lip_sync.webp](.img/lip_sync.webp)
-Model source: KissshotSusu
+---
 
 ### Random Blinking
 
-Random blinking recognizes the まばたき morph key. If it doesn't exist, you need to convert or create this morph key yourself.
+Generates natural blinking keyframes for the `まばたき` shape key.
 
-Warning: This function will overwrite the まばたき morph keyframes within the frame range.
+**Steps:**
+1. Select an MMD model (or any parent object).
+2. Open **System Console** to monitor progress.
+3. Adjust parameters and click **Generate**.
+4. Wait for the cursor to return to normal.
 
-1. Select any parent level of an MMD model (note: if there are multiple meshes under the object containing these morph keys, all mesh morph keys will be modified)
-2. It is recommended to open the system console to observe progress. (Blender menu bar -> windows -> Toggle System Console)
-3. Set parameters and click Generate
-4. Wait for the mouse pointer to change from a number back to normal
+| Parameter | Description |
+|---|---|
+| **Blink Interval** | Average seconds between blinks |
+| **Wave Ratio** | Randomness factor (0.01–1.0) |
 
-![blink_args.webp](.img/blink_args.webp)
+> **Warning:** This overwrites existing `まばたき` keyframes in the selected range.
 
-- blink interval: Blinking interval, unit seconds
-- blinking wave ratio: Random ratio adjustable from 0.01-1
+---
 
-### Other Features
+### Render Optimizer
 
-Documentation in progress...
+One-click render setup optimized for MMD-style characters.
 
-## Support
+**Presets:**
+- **PBR** — Photorealistic rendering with enhanced skin, hair, metal and cloth materials.
+- **PBR Aggressive** — Stronger material differentiation for dramatic lighting.
+- **NPR** — Toon-shaded style with Freestyle outline support.
 
-### Blender Version Compatibility
+**Features:**
+- **Adaptive 6-Point Lighting** — Key, Fill, Rim, Hair, Back, Front lights auto-positioned based on character height.
+- **Smart Material Classification** — Automatically detects skin, hair, metal, jewelry, eyes, cloth and applies tuned Principled BSDF values.
+- **Tone-Aware World** — Cool / warm / neutral world environment based on model color analysis.
+- **Compositor Setup** — Automatic vignette and color grading nodes.
+- **Engine Selection** — EEVEE or Cycles.
 
-- Mainly supported versions (I will test them)
-    - 3.6, 4.2
-- Versions that might work
-    - Greater than or equal to 3.6
-- Planned supported versions
-    - Next Blender LTS version
-- Not planned to support
-    - Less than 3.6
+> **Warning:** This creates auto-named lights and world nodes. Use the **Reset** button to clean them up.
 
-### Operating System Compatibility
+---
 
-- Currently supported
-    - windows-x64
-- Possibly supported
-    - macos-arm64
-- Not planned to support
-    - linux (unless major changes occur, not planned to support)
+## Compatibility
 
-## How to Install Blender Plugins in Newer Versions
+### Blender Versions
 
-Reference: https://docs.blender.org/manual/en/4.2/editors/preferences/addons.html#prefs-extensions-install-legacy-addon
+| Version | Python | Status |
+|---|---|---|
+| 4.2 LTS – 5.0.x | 3.11 | Supported & Tested |
+| 5.1+ | 3.13 | **Not Supported** (ABI mismatch) |
+| < 4.2 | — | Not Supported |
 
-## About Developing This Plugin
+### Operating Systems
+
+| OS | Status |
+|---|---|
+| Windows x64 | Supported |
+| macOS ARM64 | Experimental |
+| Linux | Not Planned |
+
+---
+
+## Development
+
+### Build & Lint
+
+```bash
+pip install pylint
+pylint src/ --fail-under=9.9
+```
 
 ### Notes
 
-- blender 3.6-4.4 may require numba library: version <= 0.60.0 (other Blender versions not yet confirmed)
+- The bundled audio analysis dependencies are compiled for **Python 3.11** only.
 
-## Open Source References
+---
+
+## License
+
+[GPL-3.0](LICENSE)
+
+## Credits
 
 | Project | Link | License |
-|----------------------------|--------------------------------------------------|----------------------------------------|
-| FFmpeg | https://github.com/FFmpeg/FFmpeg | GPLv3 (tools embedded in Releases use this license, no ffmpeg code in repository) |
-| ~~Vosk-API and Vosk AI Model~~ | ~~https://github.com/alphacep/vosk-api~~ | Apache-2.0 |
-| ~~CMU Dict~~ | ~~http://www.speech.cs.cmu.edu/cgi-bin/cmudict~~ | 2-Clause BSD License |
-| ~~gout-vosk tool~~ | ~~https://github.com/skys-mission/gout~~ | GPLv3 |
+|---|---|---|
+| FFmpeg | https://github.com/FFmpeg/FFmpeg | GPLv3 (tools embedded in Releases) |
