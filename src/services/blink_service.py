@@ -35,6 +35,7 @@ def generate_random_blink(context):
         interval_seconds=scene.blinking_frequency,
         wave_ratio=scene.blinking_wave_ratio,
         config=config,
+        half_ratio=scene.blinking_half_ratio,
     )
     meshes = find_mmd_meshes_with_config(context, config)
     for mesh in meshes:
@@ -81,10 +82,10 @@ def _generate_blink_times(start_frame, end_frame, fps, interval_seconds, wave_ra
     return all_blinks
 
 
-def _build_single_blink(blink_time, is_double, fps, blink_shape_key):
+def _build_single_blink(blink_time, is_double, fps, blink_shape_key, half_ratio=0.15):
     """为单个眨眼生成关键帧列表。"""
     blink_frame = int(round(blink_time * fps))
-    half_chance = 0.30 if is_double else 0.15
+    half_chance = min(1.0, half_ratio * 2.0) if is_double else half_ratio
     is_half = random.random() < half_chance
     peak_value = random.uniform(0.25, 0.55) if is_half else 1.0
 
@@ -138,6 +139,7 @@ def generate_blink_frames(  # pylint: disable=too-many-arguments,too-many-positi
     interval_seconds,
     wave_ratio,
     config=None,
+    half_ratio=0.15,
 ):
     """
     生成自然眨眼形态键动画帧序列。
@@ -145,7 +147,7 @@ def generate_blink_frames(  # pylint: disable=too-many-arguments,too-many-positi
     特性:
     - 正态分布的眨眼间隔
     - 支持双眨眼 (double blink)
-    - 支持半眨眼 (half blink)
+    - 支持半眨眼 (half blink)，概率可调
     - 闭眼快、睁眼慢的不对称曲线
     """
     frames = {}
@@ -157,7 +159,9 @@ def generate_blink_frames(  # pylint: disable=too-many-arguments,too-many-positi
     for blink_time, is_double in _generate_blink_times(
         start_frame, end_frame, fps, interval_seconds, wave_ratio,
     ):
-        shape_key, keyframes = _build_single_blink(blink_time, is_double, fps, blink_shape_key)
+        shape_key, keyframes = _build_single_blink(
+            blink_time, is_double, fps, blink_shape_key, half_ratio,
+        )
         frames.setdefault(shape_key, []).extend(keyframes)
 
     if blink_shape_key in frames:

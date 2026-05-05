@@ -41,6 +41,8 @@ class RandomBlinkPanel(bpy.types.Panel):  # pylint: disable=too-few-public-metho
         row.prop(context.scene, "blinking_frequency")
         row = layout.row()
         row.prop(context.scene, "blinking_wave_ratio")
+        row = layout.row()
+        row.prop(context.scene, "blinking_half_ratio")
         # 第三行：随机眨眼按钮
         row = layout.row()
         row.operator("scene.gen_random_blink")

@@ -188,3 +188,12 @@ blinking_wave_ratio = bpy.props.FloatProperty(
     min=0,
     max=1,
 )
+
+blinking_half_ratio = bpy.props.FloatProperty(
+    name="half blink ratio",
+    description="Probability of a half-blink (0=never, 1=always). "
+                "Double blinks use twice this chance.",
+    default=0.15,
+    min=0,
+    max=1,
+)
